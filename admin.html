@@ -25,7 +25,6 @@
     font-size:12.5px; padding:10px 20px; line-height:1.7;
   }
   main{ max-width:760px; margin:0 auto; padding:20px 16px 90px; }
-
   .cat-block{
     background:var(--bg-card); border:1px solid var(--line); border-radius:16px;
     padding:16px; margin-bottom:18px; box-shadow:var(--shadow);
@@ -40,7 +39,6 @@
   }
   .cat-block-head input.cat-name:focus{ border-bottom-color:var(--accent); }
   .del-cat{ background:none; border:none; color:var(--danger); font-size:13px; cursor:pointer; }
-
   .item-row{
     display:grid; gap:8px; align-items:start;
     margin-bottom:12px; padding:12px; border:1px solid var(--line); border-radius:10px;
@@ -53,17 +51,9 @@
     width:60px; height:60px; border-radius:8px; object-fit:cover;
     background:var(--line); border:1px solid var(--line);
   }
-  .item-row input[type=text]{
+  .item-row input[type=text], .item-row input[type=number], .item-row input[type=url]{
     padding:9px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
     font-size:14px; background:#fff; color:var(--ink); width:100%;
-  }
-  .item-row input[type=number]{
-    padding:9px 8px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
-    font-size:14px; background:#fff; color:var(--ink); width:100%;
-  }
-  .item-row input[type=url]{
-    padding:9px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
-    font-size:13px; background:#fff; color:var(--ink); width:100%; direction:ltr; text-align:left;
   }
   .item-image-input{
     grid-column:1/-1;
@@ -95,19 +85,16 @@
   }
   .avail-toggle input{ transform:scale(1.15); }
   .del-item{ background:none; border:none; color:var(--danger); font-size:16px; cursor:pointer; }
-
   .add-item-btn{
     background:none; border:1.5px dashed var(--accent); color:var(--accent-dark);
     border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;
     width:100%; margin-top:4px; font-family:'Tajawal';
   }
-
   .add-cat-btn{
     background:var(--bg-card); border:1.5px dashed var(--line); color:var(--ink-soft);
     border-radius:14px; padding:14px; font-size:14px; font-weight:700; cursor:pointer;
     width:100%; font-family:'Tajawal';
   }
-
   .bottom-bar{
     position:fixed; bottom:0; left:0; right:0; background:var(--ink); padding:14px 20px;
     display:flex; gap:10px; justify-content:center; z-index:10; flex-wrap:wrap;
@@ -118,7 +105,6 @@
   }
   .btn-primary{ background:var(--accent); color:#fff; }
   .btn-secondary{ background:#fff; color:var(--ink); }
-
   .modal-overlay{
     position:fixed; inset:0; background:rgba(20,14,8,.6); display:none;
     align-items:center; justify-content:center; z-index:50; padding:16px;
@@ -139,7 +125,6 @@
     flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; cursor:pointer;
     font-family:'Tajawal'; font-size:13.5px;
   }
-  
   .qr-modal{ max-width:420px; }
   .qr-modal .modal{ max-width:420px; }
   .qr-container{ text-align:center; padding:20px 0; }
@@ -150,340 +135,157 @@
     padding:10px; font-size:12px; word-break:break-all; margin:10px 0; font-family:monospace;
     direction:ltr; text-align:left;
   }
-
   .upload-status{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
   .upload-status.success{ color:#2d8659; }
   .upload-status.error{ color:var(--danger); }
 </style>
 </head>
 <body>
-
-<header>
-  <div>
-    <h1>لوحة إدارة القائمة</h1>
-    <p>مخبز صاروج بيكري</p>
-  </div>
-</header>
-
-<div class="warn-banner">
-  عدّل الأسماء والأسعار والصور وتوفّر المنتجات هنا كما تحب، ثم اضغط «تصدير الكود المحدث» بالأسفل،
-  انسخ النص، افتح ملف <b>data.js</b> في مجلد المشروع، استبدل محتواه بالكامل بالنص المنسوخ، احفظ،
-  ثم من GitHub Desktop اكتب وصف التغيير واضغط Commit ثم Push. هذه الصفحة لا تحفظ التغييرات
-  تلقائيًا على الإنترنت.
-</div>
-
+<header><div><h1>لوحة إدارة القائمة</h1><p>مخبز صاروج بيكري</p></div></header>
+<div class="warn-banner">عدّل الأسماء والأسعار والصور وتوفّر المنتجات هنا، ثم اضغط «تصدير الكود المحدث» وانسخ النص في data.js</div>
 <main id="catContainer"></main>
-
 <button class="add-cat-btn" id="addCatBtn" style="max-width:760px;margin:0 auto 40px;display:block;width:calc(100% - 32px);">+ إضافة قسم جديد</button>
-
 <div class="bottom-bar">
-  <button class="btn-secondary" id="previewBtn">👁 معاينة القائمة</button>
-  <button class="btn-secondary" id="qrcodeBtn">📱 الباركود</button>
-  <button class="btn-primary" id="exportBtn">تصدير الكود المحدث ⇩</button>
+  <button class="btn-secondary" id="previewBtn">👁 معاينة</button>
+  <button class="btn-secondary" id="qrcodeBtn">📱 باركود</button>
+  <button class="btn-primary" id="exportBtn">تصدير ⇩</button>
 </div>
-
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h3>انسخ هذا النص بالكامل إلى ملف data.js</h3>
+    <h3>انسخ هذا النص في data.js</h3>
     <textarea id="exportArea" readonly></textarea>
     <div class="modal-actions">
       <button class="btn-secondary" id="closeModalBtn">إغلاق</button>
-      <button class="btn-primary" id="copyBtn">نسخ النص</button>
+      <button class="btn-primary" id="copyBtn">نسخ</button>
     </div>
   </div>
 </div>
-
 <div class="modal-overlay qr-modal" id="qrModalOverlay">
   <div class="modal">
     <h3>الباركود - QR Code</h3>
-    <div class="qr-container">
-      <div id="qrCanvas" class="qr-canvas"></div>
-    </div>
-    <div class="qr-info">أظهر هذا الباركود على طاولات المقهى ليتمكن الزبائن من فتح القائمة</div>
+    <div class="qr-container"><div id="qrCanvas" class="qr-canvas"></div></div>
+    <div class="qr-info">أظهر هذا الباركود على الطاولات</div>
     <div class="qr-url" id="qrUrl"></div>
     <div class="modal-actions">
       <button class="btn-secondary" id="closeQrBtn">إغلاق</button>
-      <button class="btn-primary" id="downloadQrBtn">تحميل الباركود ⬇</button>
+      <button class="btn-primary" id="downloadQrBtn">تحميل</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js" defer></script>
 <script>
-  // Embedded default data - سيتم تحديثها عند تحميل data.js
-  let CATEGORIES = [
-    { id: "iced-tea", nameAr: "الشاي المثلج", nameEn: "Iced Tea", items: [
-      {id:"it-1",nameAr:"خوخ وباشن",nameEn:"Peach Passion",price:1.000,image:"",available:true}
-    ]},
-    { id: "cold-coffee", nameAr: "القهوة الباردة", nameEn: "Cold Coffee", items: [
-      {id:"cc-1",nameAr:"سبانيش لاتيه",nameEn:"Spanish Latte",price:1.300,image:"",available:true}
-    ]},
-    { id: "hot-coffee", nameAr: "القهوة الساخنة", nameEn: "Hot Coffee", items: [
-      {id:"hc-1",nameAr:"كابتشينو",nameEn:"Cappuccino",price:1.200,image:"",available:true}
-    ]}
-  ];
-  let SHOP_NAME_AR = 'مخبز صاروج بيكري';
-  let SHOP_NAME_EN = 'Sarouj Bakery';
-  let CURRENCY_LABEL = 'ر.ع.';
+const SUPABASE_URL = 'https://swgykbxckelpvgwgneal.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_F9N5hjb5Q0wlw-1wHR2_eQ_vuMb9YpD';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const SUPABASE_URL = 'https://swgykbxckelpvgwgneal.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_F9N5hjb5Q0wlw-1wHR2_eQ_vuMb9YpD';
-  
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const CATEGORIES = [
+  {id:"iced-tea",nameAr:"الشاي المثلج",nameEn:"Iced Tea",items:[{id:"it-1",nameAr:"خوخ وباشن",nameEn:"Peach Passion",price:1.000,image:"https://images.unsplash.com/photo-1585518419759-fac26a0ee6d0?w=150&q=70",available:true},{id:"it-2",nameAr:"مانجو",nameEn:"Mango",price:1.000,image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=150&q=70",available:true},{id:"it-3",nameAr:"فراولة",nameEn:"Strawberry",price:1.000,image:"https://images.unsplash.com/photo-1587256144407-8f06ca6c869c?w=150&q=70",available:true},{id:"it-4",nameAr:"توت أزرق",nameEn:"Blueberry",price:1.000,image:"https://images.unsplash.com/photo-1599599810694-b5ac4dd87282?w=150&q=70",available:true}]},
+  {id:"teapot",nameAr:"أباريق الشاي",nameEn:"Teapot",items:[{id:"tp-1",nameAr:"أزهار البابونج",nameEn:"Chamomile",price:0.700,image:"https://images.unsplash.com/photo-1597318107778-96b88b0ba02d?w=150&q=70",available:true},{id:"tp-2",nameAr:"الزعفران",nameEn:"Saffron",price:0.700,image:"https://images.unsplash.com/photo-1597318107778-96b88b0ba02d?w=150&q=70",available:true},{id:"tp-3",nameAr:"الليمون والزنجبيل",nameEn:"Lemon Ginger",price:0.700,image:"https://images.unsplash.com/photo-1597318107778-96b88b0ba02d?w=150&q=70",available:true},{id:"tp-4",nameAr:"لافندر",nameEn:"Lavender",price:0.700,image:"https://images.unsplash.com/photo-1597318107778-96b88b0ba02d?w=150&q=70",available:true}]},
+  {id:"mojitos",nameAr:"موهيتو",nameEn:"Mojitos",items:[{id:"mj-1",nameAr:"الفراولة",nameEn:"Strawberry Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true},{id:"mj-2",nameAr:"الخوخ",nameEn:"Peach Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true},{id:"mj-3",nameAr:"التوت الأزرق",nameEn:"Blueberry Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true},{id:"mj-4",nameAr:"الليمون",nameEn:"Lemon Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true},{id:"mj-5",nameAr:"الرمان",nameEn:"Pomegranate Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true},{id:"mj-6",nameAr:"باشن",nameEn:"Passion Mojito",price:1.000,image:"https://images.unsplash.com/photo-1556140533-bb4e41f92bf2?w=150&q=70",available:true}]},
+  {id:"ice-cream",nameAr:"آيسكريم",nameEn:"Ice Cream",items:[{id:"ic-1",nameAr:"مخروط فراولة",nameEn:"Strawberry Cone",price:1.600,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true},{id:"ic-2",nameAr:"مخروط فانيلا",nameEn:"Vanilla Cone",price:1.600,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true},{id:"ic-3",nameAr:"مخروط مكس",nameEn:"Mixed Cone",price:1.600,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true},{id:"ic-4",nameAr:"كوب فراولة",nameEn:"Strawberry Cup",price:0.900,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true},{id:"ic-5",nameAr:"كوب فانيلا",nameEn:"Vanilla Cup",price:0.900,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true},{id:"ic-6",nameAr:"كوب مكس",nameEn:"Mixed Cup",price:0.900,image:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=150&q=70",available:true}]},
+  {id:"cold-coffee",nameAr:"القهوة الباردة",nameEn:"Cold Coffee",items:[{id:"cc-1",nameAr:"سبانيش لاتيه",nameEn:"Spanish Latte",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-2",nameAr:"كرامل لاتيه",nameEn:"Caramel Latte",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-3",nameAr:"زعفران لاتيه",nameEn:"Saffron Latte",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-4",nameAr:"بيستاشيو لاتيه",nameEn:"Pistachio Latte",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-5",nameAr:"دارك موكا",nameEn:"Dark Mocha",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-6",nameAr:"وايت موكا",nameEn:"White Mocha",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-7",nameAr:"كركديه",nameEn:"Hibiscus",price:1.000,image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=150&q=70",available:true},{id:"cc-8",nameAr:"كورتادو",nameEn:"Cortado",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-9",nameAr:"ماتشا",nameEn:"Matcha",price:1.400,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-10",nameAr:"أفوكاتو",nameEn:"Avocado",price:1.500,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-11",nameAr:"كريمي إسبريسو",nameEn:"Creamy Espresso",price:1.400,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-12",nameAr:"روز لاتيه",nameEn:"Rose Latte",price:1.300,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"cc-13",nameAr:"ماء",nameEn:"Water",price:0.100,image:"https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?w=150&q=70",available:true}]},
+  {id:"frappe",nameAr:"فراب",nameEn:"Frappe",items:[{id:"fr-1",nameAr:"بيستاشيو فراب",nameEn:"Pistachio Frappe",price:1.800,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"fr-2",nameAr:"كرامل فراب",nameEn:"Caramel Frappe",price:1.800,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true},{id:"fr-3",nameAr:"موكا فراب",nameEn:"Mocha Frappe",price:1.800,image:"https://images.unsplash.com/photo-1605960375944-2ed4e9a9e3b1?w=150&q=70",available:true}]},
+  {id:"hot-coffee",nameAr:"القهوة الساخنة",nameEn:"Hot Coffee",items:[{id:"hc-1",nameAr:"سبانيش لاتيه",nameEn:"Spanish Latte",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-2",nameAr:"كرامل لاتيه",nameEn:"Caramel Latte",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-3",nameAr:"زعفران لاتيه",nameEn:"Saffron Latte",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-4",nameAr:"بيستاشيو لاتيه",nameEn:"Pistachio Latte",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-5",nameAr:"موكا",nameEn:"Mocha",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-6",nameAr:"كورتادو",nameEn:"Cortado",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-7",nameAr:"ماتشا",nameEn:"Matcha",price:1.400,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-8",nameAr:"كابتشينو",nameEn:"Cappuccino",price:1.200,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-9",nameAr:"لاتيه",nameEn:"Latte",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-10",nameAr:"فلات وايت",nameEn:"Flat White",price:1.300,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-11",nameAr:"إسبريسو",nameEn:"Espresso",price:0.900,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-12",nameAr:"أمريكانو",nameEn:"Americano",price:1.000,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-13",nameAr:"هوت شوكليت",nameEn:"Hot Chocolate",price:1.400,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true},{id:"hc-14",nameAr:"قهوة عمانية",nameEn:"Omani Coffee",price:1.000,image:"https://images.unsplash.com/photo-1545665225-76d7ff409dd1?w=150&q=70",available:true}]},
+  {id:"cold-brew",nameAr:"كولد برو / مشروبات خاصة",nameEn:"Cold Brew / Speciality",items:[{id:"cb-1",nameAr:"V60 كلاسيك",nameEn:"V60 Classic",price:1.500,image:"https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?w=150&q=70",available:true},{id:"cb-2",nameAr:"V60 فروتي",nameEn:"V60 Fruity",price:1.600,image:"https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?w=150&q=70",available:true},{id:"cb-3",nameAr:"كولد برو",nameEn:"Cold Brew",price:1.600,image:"https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?w=150&q=70",available:true}]},
+  {id:"bakery",nameAr:"الحلويات والمخبوزات",nameEn:"Dessert & Bakery",items:[{id:"bk-1",nameAr:"كرواسون سادة",nameEn:"Plain Croissant",price:1.000,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-2",nameAr:"كرواسون شوكليت",nameEn:"Chocolate Croissant",price:1.400,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-3",nameAr:"كرواسون تركي",nameEn:"Turkish Croissant",price:1.700,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-4",nameAr:"كرواسون حلومي",nameEn:"Halloumi Croissant",price:1.700,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-5",nameAr:"كرواسون بيض",nameEn:"Egg Croissant",price:1.700,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-6",nameAr:"دانيش بيري",nameEn:"Danish Pastry",price:1.000,image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&q=70",available:true},{id:"bk-7",nameAr:"شوكليت كيك",nameEn:"Chocolate Cake",price:2.500,image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&q=70",available:true},{id:"bk-8",nameAr:"كريمي كيك",nameEn:"Creamy Cake",price:2.500,image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&q=70",available:true},{id:"bk-9",nameAr:"كيكة التمر",nameEn:"Date Cake",price:2.500,image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&q=70",available:true},{id:"bk-10",nameAr:"بيستاشيو كيك",nameEn:"Pistachio Cake",price:2.500,image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&q=70",available:true}]}
+];
+const SHOP_NAME_AR="مخبز صاروج بيكري",SHOP_NAME_EN="Sarouj Bakery",CURRENCY_LABEL="ر.ع.";
 
-  let workingData = JSON.parse(JSON.stringify(CATEGORIES));
-  let shopAr = SHOP_NAME_AR, shopEn = SHOP_NAME_EN, currency = CURRENCY_LABEL;
-  let catCounter = workingData.length;
-  let itemCounter = 0;
-  workingData.forEach(c=>c.items.forEach(()=>itemCounter++));
-
-  function uid(prefix){ return prefix + '-' + Math.random().toString(36).slice(2,8); }
-
-  async function uploadImageToSupabase(file, itemId) {
-    try {
-      const fileName = `products/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${file.name.replace(/[^a-z0-9.]/gi, '_')}`;
-      const { data, error } = await supabase.storage
-        .from('menu-images')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-      
-      if (error) throw error;
-      
-      const { data: { publicUrl } } = supabase.storage
-        .from('menu-images')
-        .getPublicUrl(fileName);
-      
-      return publicUrl;
-    } catch (error) {
-      console.error('Upload error:', error);
-      throw error;
-    }
-  }
-
-  function render(){
-    const container = document.getElementById('catContainer');
-    container.innerHTML = '';
-    workingData.forEach((cat, ci)=>{
-      const block = document.createElement('div');
-      block.className = 'cat-block';
-      block.innerHTML = `
-        <div class="cat-block-head">
-          <input type="text" class="cat-name" value="${escapeHtml(cat.nameAr)}" data-ci="${ci}">
-          <button class="del-cat" data-ci="${ci}">حذف القسم ✕</button>
-        </div>
-        <div class="items-wrap" data-ci="${ci}"></div>
-        <button class="add-item-btn" data-ci="${ci}">+ إضافة منتج لهذا القسم</button>
-      `;
-      container.appendChild(block);
-      const itemsWrap = block.querySelector('.items-wrap');
-      cat.items.forEach((it, ii)=>{
-        const row = document.createElement('div');
-        row.className = 'item-row';
-        row.innerHTML = `
-          <div class="item-row-header">
-            <img src="${it.image || ''}" alt="صورة" class="item-image-preview" onerror="this.style.opacity='0.3'">
-            <input type="text" value="${escapeHtml(it.nameAr)}" data-ci="${ci}" data-ii="${ii}" data-field="nameAr" placeholder="اسم المنتج بالعربية">
-            <input type="number" step="0.001" value="${it.price}" data-ci="${ci}" data-ii="${ii}" data-field="price" placeholder="السعر">
-            <label class="avail-toggle">
-              <input type="checkbox" ${it.available!==false?'checked':''} data-ci="${ci}" data-ii="${ii}" data-field="available">
-              متوفر
-            </label>
-            <button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button>
-          </div>
-          <div class="item-image-input">
-            <label>الصورة:</label>
-            <div class="image-upload-group">
-              <input type="file" accept="image/*" class="image-file-input" data-ci="${ci}" data-ii="${ii}">
-              <button class="image-upload-btn" data-ci="${ci}" data-ii="${ii}">رفع</button>
-            </div>
-            <div class="image-url-input">
-              <input type="url" value="${escapeHtml(it.image || '')}" data-ci="${ci}" data-ii="${ii}" data-field="image" placeholder="رابط الصورة">
-            </div>
-            <div class="upload-status" data-ci="${ci}" data-ii="${ii}"></div>
-          </div>
-        `;
-        itemsWrap.appendChild(row);
-      });
+let workingData=JSON.parse(JSON.stringify(CATEGORIES));
+function uid(p){return p+'-'+Math.random().toString(36).slice(2,8);}
+async function uploadImageToSupabase(file){
+  try{
+    const fn=`products/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
+    const{data,error}=await supabase.storage.from('menu-images').upload(fn,file,{cacheControl:'3600',upsert:false});
+    if(error)throw error;
+    const{data:{publicUrl}}=supabase.storage.from('menu-images').getPublicUrl(fn);
+    return publicUrl;
+  }catch(e){console.error(e);throw e;}
+}
+function render(){
+  const c=document.getElementById('catContainer');c.innerHTML='';
+  workingData.forEach((cat,ci)=>{
+    const b=document.createElement('div');b.className='cat-block';
+    b.innerHTML=`<div class="cat-block-head"><input class="cat-name" value="${esc(cat.nameAr)}" data-ci="${ci}"><button class="del-cat" data-ci="${ci}">✕</button></div><div class="items-wrap" data-ci="${ci}"></div><button class="add-item-btn" data-ci="${ci}">+ منتج</button>`;
+    c.appendChild(b);
+    const iw=b.querySelector('.items-wrap');
+    cat.items.forEach((it,ii)=>{
+      const r=document.createElement('div');r.className='item-row';
+      r.innerHTML=`<div class="item-row-header"><img src="${it.image||''}" class="item-image-preview" onerror="this.style.opacity='0.3'"><input value="${esc(it.nameAr)}" data-ci="${ci}" data-ii="${ii}" data-field="nameAr"><input type="number" step="0.001" value="${it.price}" data-ci="${ci}" data-ii="${ii}" data-field="price"><label class="avail-toggle"><input type="checkbox" ${it.available?'checked':''} data-ci="${ci}" data-ii="${ii}" data-field="available">متوفر</label><button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button></div><div class="item-image-input"><label>الصورة:</label><div class="image-upload-group"><input type="file" accept="image/*" data-ci="${ci}" data-ii="${ii}"><button class="image-upload-btn" data-ci="${ci}" data-ii="${ii}">رفع</button></div><input type="url" value="${esc(it.image||'')}" data-ci="${ci}" data-ii="${ii}" data-field="image"><div class="upload-status" data-ci="${ci}" data-ii="${ii}"></div></div>`;
+      iw.appendChild(r);
     });
-
-    container.querySelectorAll('input[data-field="nameAr"], input[data-field="price"]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        const ci = +inp.dataset.ci, ii = +inp.dataset.ii, field = inp.dataset.field;
-        workingData[ci].items[ii][field] = field==='price' ? parseFloat(inp.value||0) : inp.value;
-      });
+  });
+  c.querySelectorAll('input[data-field]').forEach(inp=>inp.addEventListener('input',()=>{
+    const ci=+inp.dataset.ci,ii=+inp.dataset.ii,f=inp.dataset.field;
+    if(f==='price')workingData[ci].items[ii][f]=parseFloat(inp.value||0);
+    else if(f==='image'){workingData[ci].items[ii][f]=inp.value;inp.parentElement.parentElement.querySelector('.item-image-preview').src=inp.value;}
+    else workingData[ci].items[ii][f]=inp.value;
+  }));
+  c.querySelectorAll('input[type="checkbox"]').forEach(inp=>inp.addEventListener('change',()=>{
+    workingData[+inp.dataset.ci].items[+inp.dataset.ii].available=inp.checked;
+  }));
+  c.querySelectorAll('.image-upload-btn').forEach(btn=>btn.addEventListener('click',async()=>{
+    const ci=+btn.dataset.ci,ii=+btn.dataset.ii,fi=btn.previousElementSibling.querySelector('input[type="file"]'),file=fi.files[0];
+    if(!file)return;btn.disabled=true;btn.textContent='جاري...';
+    const st=btn.parentElement.nextElementSibling.nextElementSibling;
+    try{
+      const url=await uploadImageToSupabase(file);workingData[ci].items[ii].image=url;
+      btn.parentElement.nextElementSibling.value=url;btn.parentElement.parentElement.querySelector('.item-image-preview').src=url;fi.value='';
+      st.textContent='✓ تم الرفع';st.classList.add('success');setTimeout(()=>{st.textContent='';st.classList.remove('success');},2000);
+    }catch(e){st.textContent='✗ خطأ';st.classList.add('error');}finally{btn.disabled=false;btn.textContent='رفع';}
+  }));
+  c.querySelectorAll('.del-item').forEach(btn=>btn.addEventListener('click',()=>{
+    workingData[+btn.dataset.ci].items.splice(+btn.dataset.ii,1);render();
+  }));
+  c.querySelectorAll('.del-cat').forEach(btn=>btn.addEventListener('click',()=>{
+    if(confirm('حذف القسم؟')){workingData.splice(+btn.dataset.ci,1);render();}
+  }));
+  c.querySelectorAll('.add-item-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    const ci=+btn.dataset.ci;workingData[ci].items.push({id:uid('new'),nameAr:'منتج جديد',nameEn:'New',price:0.500,image:'',available:true});render();
+  }));
+  c.querySelectorAll('.cat-name').forEach(inp=>inp.addEventListener('input',()=>{
+    workingData[+inp.dataset.ci].nameAr=inp.value;
+  }));
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+document.getElementById('addCatBtn').addEventListener('click',()=>{
+  workingData.push({id:uid('cat'),nameAr:'قسم جديد',nameEn:'New',items:[]});render();
+});
+function generateCode(){
+  let out=`const CATEGORIES=[`;
+  workingData.forEach((cat,ci)=>{
+    out+=`{id:"${cat.id}",nameAr:"${cat.nameAr.replace(/"/g,'\\"')}",nameEn:"${(cat.nameEn||'').replace(/"/g,'\\"')}",items:[`;
+    cat.items.forEach((it,ii)=>{
+      out+=`{id:"${it.id}",nameAr:"${it.nameAr.replace(/"/g,'\\"')}",nameEn:"${(it.nameEn||'').replace(/"/g,'\\"')}",price:${Number(it.price).toFixed(3)},image:"${(it.image||'').replace(/"/g,'\\"')}",available:${it.available}}${ii<cat.items.length-1?',':''}`;
     });
-
-    container.querySelectorAll('input[data-field="image"]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
-        workingData[ci].items[ii].image = inp.value;
-        const preview = inp.parentElement.parentElement.querySelector('.item-image-preview');
-        preview.src = inp.value;
-      });
-    });
-
-    container.querySelectorAll('.image-upload-btn').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const ci = +btn.dataset.ci, ii = +btn.dataset.ii;
-        const fileInput = btn.previousElementSibling;
-        const file = fileInput.files[0];
-        if(!file) return;
-        
-        btn.disabled = true;
-        btn.textContent = 'جاري...';
-        const statusDiv = btn.parentElement.nextElementSibling.nextElementSibling;
-        
-        try {
-          const url = await uploadImageToSupabase(file, `${ci}-${ii}`);
-          workingData[ci].items[ii].image = url;
-          const urlInput = btn.parentElement.nextElementSibling.querySelector('input[data-field="image"]');
-          urlInput.value = url;
-          const preview = btn.parentElement.parentElement.querySelector('.item-image-preview');
-          preview.src = url;
-          fileInput.value = '';
-          statusDiv.textContent = '✓ تم الرفع بنجاح';
-          statusDiv.classList.add('success');
-          setTimeout(()=>{ statusDiv.textContent = ''; statusDiv.classList.remove('success'); }, 3000);
-        } catch(error){
-          statusDiv.textContent = '✗ خطأ في الرفع: ' + error.message;
-          statusDiv.classList.add('error');
-          console.error(error);
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'رفع';
-        }
-      });
-    });
-
-    container.querySelectorAll('input[data-field="available"]').forEach(inp=>{
-      inp.addEventListener('change', ()=>{
-        const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
-        workingData[ci].items[ii].available = inp.checked;
-      });
-    });
-    container.querySelectorAll('.cat-name').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        workingData[+inp.dataset.ci].nameAr = inp.value;
-      });
-    });
-    container.querySelectorAll('.del-item').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const ci = +btn.dataset.ci, ii = +btn.dataset.ii;
-        workingData[ci].items.splice(ii,1);
-        render();
-      });
-    });
-    container.querySelectorAll('.del-cat').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        if(confirm('حذف هذا القسم بكل منتجاته؟')){
-          workingData.splice(+btn.dataset.ci,1);
-          render();
-        }
-      });
-    });
-    container.querySelectorAll('.add-item-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const ci = +btn.dataset.ci;
-        itemCounter++;
-        workingData[ci].items.push({ id: uid('new'), nameAr:'منتج جديد', nameEn:'New Product', price:0.500, image:'', available:true });
-        render();
-      });
-    });
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  document.getElementById('addCatBtn').addEventListener('click', ()=>{
-    catCounter++;
-    workingData.push({ id: uid('cat'), nameAr:'قسم جديد', nameEn:'New Category', items:[] });
-    render();
+    out+=`]}${ci<workingData.length-1?',':''}`;
   });
-
-  function generateCode(){
-    let out = `/* تم إنشاء هذا الملف عبر لوحة الإدارة - الصق هذا المحتوى بالكامل في data.js */\n\n`;
-    out += `const CATEGORIES = [\n`;
-    workingData.forEach((cat, ci)=>{
-      out += `  {\n    id: "${cat.id}",\n    nameAr: "${cat.nameAr.replace(/"/g,'\\"')}",\n    nameEn: "${(cat.nameEn||'').replace(/"/g,'\\"')}",\n    items: [\n`;
-      cat.items.forEach((it, ii)=>{
-        out += `      { id: "${it.id}", nameAr: "${it.nameAr.replace(/"/g,'\\"')}", nameEn: "${(it.nameEn||'').replace(/"/g,'\\"')}", price: ${Number(it.price).toFixed(3)}, image: "${(it.image||'').replace(/"/g,'\\"')}", available: ${it.available!==false} }${ii<cat.items.length-1?',':''}\n`;
-      });
-      out += `    ]\n  }${ci<workingData.length-1?',':''}\n`;
-    });
-    out += `];\n\nconst SHOP_NAME_AR = "${shopAr}";\nconst SHOP_NAME_EN = "${shopEn}";\nconst CURRENCY_LABEL = "${currency}";\nconst CURRENT_LANG = "ar";\n`;
-    return out;
-  }
-
-  document.getElementById('exportBtn').addEventListener('click', ()=>{
-    document.getElementById('exportArea').value = generateCode();
-    document.getElementById('modalOverlay').classList.add('open');
-  });
-  document.getElementById('closeModalBtn').addEventListener('click', ()=>{
-    document.getElementById('modalOverlay').classList.remove('open');
-  });
-  document.getElementById('copyBtn').addEventListener('click', ()=>{
-    const area = document.getElementById('exportArea');
-    area.select();
-    document.execCommand('copy');
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = 'تم النسخ ✓';
-    setTimeout(()=>btn.textContent='نسخ النص', 1500);
-  });
-  
-  document.getElementById('previewBtn').addEventListener('click', ()=>{
-    window.open('index.html','_blank');
-  });
-
-  document.getElementById('qrcodeBtn').addEventListener('click', ()=>{
-    const url = 'https://maawali-s.github.io/menu/index.html';
-    document.getElementById('qrUrl').textContent = url;
-    const qrContainer = document.getElementById('qrCanvas');
-    qrContainer.innerHTML = '';
-    new QRCode(qrContainer, {
-      text: url,
-      width: 280,
-      height: 280,
-      colorDark: '#3B2A1E',
-      colorLight: '#FFFBF3'
-    });
-    document.getElementById('qrModalOverlay').classList.add('open');
-  });
-
-  document.getElementById('closeQrBtn').addEventListener('click', ()=>{
-    document.getElementById('qrModalOverlay').classList.remove('open');
-  });
-
-  document.getElementById('downloadQrBtn').addEventListener('click', ()=>{
-    const canvas = document.querySelector('#qrCanvas canvas');
-    if(canvas){
-      const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
-      link.download = 'sarouj-bakery-qr.png';
-      link.click();
-    }
-  });
-
-  document.getElementById('qrModalOverlay').addEventListener('click', (e)=>{
-    if(e.target.id==='qrModalOverlay') document.getElementById('qrModalOverlay').classList.remove('open');
-  });
-
-  document.getElementById('modalOverlay').addEventListener('click', (e)=>{
-    if(e.target.id==='modalOverlay') document.getElementById('modalOverlay').classList.remove('open');
-  });
-
-  // حمّل البيانات الكاملة من data.js عند التوفر
-  window.addEventListener('load', ()=>{
-    render();
-  });
-
-  // استدع render مباشرة بعد التأكد من تحميل البيانات
-  setTimeout(render, 100);
-  render();
+  out+=`];\nconst SHOP_NAME_AR="${SHOP_NAME_AR}";const SHOP_NAME_EN="${SHOP_NAME_EN}";const CURRENCY_LABEL="${CURRENCY_LABEL}";const CURRENT_LANG="ar";`;
+  return out;
+}
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  document.getElementById('exportArea').value=generateCode();document.getElementById('modalOverlay').classList.add('open');
+});
+document.getElementById('closeModalBtn').addEventListener('click',()=>{document.getElementById('modalOverlay').classList.remove('open');});
+document.getElementById('copyBtn').addEventListener('click',()=>{
+  const a=document.getElementById('exportArea');a.select();document.execCommand('copy');
+  const b=document.getElementById('copyBtn');b.textContent='تم النسخ ✓';setTimeout(()=>b.textContent='نسخ',1500);
+});
+document.getElementById('previewBtn').addEventListener('click',()=>{window.open('index.html','_blank');});
+document.getElementById('qrcodeBtn').addEventListener('click',()=>{
+  const url='https://maawali-s.github.io/menu/index.html';document.getElementById('qrUrl').textContent=url;
+  const qc=document.getElementById('qrCanvas');qc.innerHTML='';new QRCode(qc,{text:url,width:280,height:280,colorDark:'#3B2A1E',colorLight:'#FFFBF3'});
+  document.getElementById('qrModalOverlay').classList.add('open');
+});
+document.getElementById('closeQrBtn').addEventListener('click',()=>{document.getElementById('qrModalOverlay').classList.remove('open');});
+document.getElementById('downloadQrBtn').addEventListener('click',()=>{
+  const c=document.querySelector('#qrCanvas canvas');
+  if(c){const l=document.createElement('a');l.href=c.toDataURL('image/png');l.download='menu-qr.png';l.click();}
+});
+[document.getElementById('qrModalOverlay'),document.getElementById('modalOverlay')].forEach(m=>m.addEventListener('click',(e)=>{if(e.target.id){m.classList.remove('open');}}));
+render();
 </script>
 </body>
 </html>
