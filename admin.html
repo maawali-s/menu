@@ -198,9 +198,9 @@ function uid(p){return p+'-'+Math.random().toString(36).slice(2,8);}
 async function uploadImageToSupabase(file){
   try{
     const fn=`products/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
-    const{data,error}=await supabase.storage.from('menu-images').upload(fn,file,{cacheControl:'3600',upsert:false});
+    const{data,error}=await supabase.storage.from('menu').upload(fn,file,{cacheControl:'3600',upsert:false});
     if(error)throw error;
-    const{data:{publicUrl}}=supabase.storage.from('menu-images').getPublicUrl(fn);
+    const{data:{publicUrl}}=supabase.storage.from('menu').getPublicUrl(fn);
     return publicUrl;
   }catch(e){console.error(e);throw e;}
 }
