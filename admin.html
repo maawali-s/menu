@@ -74,11 +74,11 @@
 
   .bottom-bar{
     position:fixed; bottom:0; left:0; right:0; background:var(--ink); padding:14px 20px;
-    display:flex; gap:10px; justify-content:center; z-index:10;
+    display:flex; gap:10px; justify-content:center; z-index:10; flex-wrap:wrap;
   }
   .bottom-bar button{
     padding:12px 20px; border-radius:12px; border:none; font-weight:700; font-size:14px;
-    cursor:pointer; font-family:'Tajawal';
+    cursor:pointer; font-family:'Tajawal'; flex:1; min-width:140px;
   }
   .btn-primary{ background:var(--accent); color:#fff; }
   .btn-secondary{ background:#fff; color:var(--ink); }
@@ -102,6 +102,17 @@
   .modal-actions button{
     flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; cursor:pointer;
     font-family:'Tajawal'; font-size:13.5px;
+  }
+  
+  .qr-modal{ max-width:420px; }
+  .qr-modal .modal{ max-width:420px; }
+  .qr-container{ text-align:center; padding:20px 0; }
+  .qr-canvas{ border:2px solid var(--line); border-radius:12px; padding:10px; background:#fff; max-width:100%; }
+  #qrCanvas{ display:inline-block; }
+  .qr-info{ font-size:13px; color:var(--ink-soft); margin:14px 0; line-height:1.6; }
+  .qr-url{ background:var(--bg-card); border:1px solid var(--line); border-radius:10px;
+    padding:10px; font-size:12px; word-break:break-all; margin:10px 0; font-family:monospace;
+    direction:ltr; text-align:left;
   }
 </style>
 </head>
@@ -127,6 +138,7 @@
 
 <div class="bottom-bar">
   <button class="btn-secondary" id="previewBtn">👁 معاينة القائمة</button>
+  <button class="btn-secondary" id="qrcodeBtn">📱 البارकود</button>
   <button class="btn-primary" id="exportBtn">تصدير الكود المحدث ⇩</button>
 </div>
 
@@ -141,7 +153,23 @@
   </div>
 </div>
 
+<div class="modal-overlay qr-modal" id="qrModalOverlay">
+  <div class="modal">
+    <h3>الباركود - QR Code</h3>
+    <div class="qr-container">
+      <div id="qrCanvas" class="qr-canvas"></div>
+    </div>
+    <div class="qr-info">أظهر هذا الباركود على طاولات المقهى ليتمكن الزبائن من فتح القائمة</div>
+    <div class="qr-url" id="qrUrl"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="closeQrBtn">إغلاق</button>
+      <button class="btn-primary" id="downloadQrBtn">تحميل الباركود ⬇</button>
+    </div>
+  </div>
+</div>
+
 <script src="data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   // نسخة عاملة قابلة للتعديل في الذاكرة
   let workingData = JSON.parse(JSON.stringify(CATEGORIES));
@@ -265,8 +293,46 @@
     btn.textContent = 'تم النسخ ✓';
     setTimeout(()=>btn.textContent='نسخ النص', 1500);
   });
+  
   document.getElementById('previewBtn').addEventListener('click', ()=>{
     window.open('index.html','_blank');
+  });
+
+  document.getElementById('qrcodeBtn').addEventListener('click', ()=>{
+    const url = 'https://maawali-s.github.io/menu/index.html';
+    document.getElementById('qrUrl').textContent = url;
+    const qrContainer = document.getElementById('qrCanvas');
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+      text: url,
+      width: 280,
+      height: 280,
+      colorDark: '#3B2A1E',
+      colorLight: '#FFFBF3'
+    });
+    document.getElementById('qrModalOverlay').classList.add('open');
+  });
+
+  document.getElementById('closeQrBtn').addEventListener('click', ()=>{
+    document.getElementById('qrModalOverlay').classList.remove('open');
+  });
+
+  document.getElementById('downloadQrBtn').addEventListener('click', ()=>{
+    const canvas = document.querySelector('#qrCanvas canvas');
+    if(canvas){
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'sarouj-bakery-qr.png';
+      link.click();
+    }
+  });
+
+  document.getElementById('qrModalOverlay').addEventListener('click', (e)=>{
+    if(e.target.id==='qrModalOverlay') document.getElementById('qrModalOverlay').classList.remove('open');
+  });
+
+  document.getElementById('modalOverlay').addEventListener('click', (e)=>{
+    if(e.target.id==='modalOverlay') document.getElementById('modalOverlay').classList.remove('open');
   });
 
   render();
