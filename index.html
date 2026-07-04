@@ -265,7 +265,7 @@
       <div class="brand-title brand-font" id="shopNameAr">مخبز صاروج بيكري</div>
       <div class="brand-sub" id="shopNameEn">SAROUJ BAKERY</div>
     </div>
-    <button id="langToggleBtn" class="lang-btn">🇬🇧 English</button>
+    <button id="langToggleBtn" class="lang-btn">🇴🇲 English</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
@@ -346,7 +346,8 @@
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = currentLang;
     const btn = document.getElementById('langToggleBtn');
-    btn.textContent = currentLang === 'ar' ? '🇬🇧 English' : '🇸🇦 العربية';
+    btn.textContent = currentLang === 'ar' ? '🇬🇧 English' : '🇴🇲 العربية';
+    document.getElementById('searchInput').placeholder = currentLang === 'ar' ? 'ابحث عن منتج...' : 'Search...';
     renderMenu(document.getElementById('searchInput').value);
     buildNav();
   }
