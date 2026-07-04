@@ -42,8 +42,19 @@
   .del-cat{ background:none; border:none; color:var(--danger); font-size:13px; cursor:pointer; }
 
   .item-row{
-    display:grid; grid-template-columns: 1fr 90px 70px 30px; gap:8px; align-items:center;
-    margin-bottom:8px;
+    display:grid; gap:8px; align-items:start;
+    margin-bottom:12px; padding:12px; border:1px solid var(--line); border-radius:10px;
+    background:#fff;
+  }
+  .item-row-header{
+    display:grid; grid-template-columns: 60px 1fr 90px 70px 30px; gap:8px; align-items:center;
+  }
+  .item-image-preview{
+    width:60px; height:60px; border-radius:8px; object-fit:cover;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .item-fields{
+    display:grid; grid-template-columns: 1fr 90px 70px; gap:8px; align-items:center;
   }
   .item-row input[type=text]{
     padding:9px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
@@ -52,6 +63,16 @@
   .item-row input[type=number]{
     padding:9px 8px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
     font-size:14px; background:#fff; color:var(--ink); width:100%;
+  }
+  .item-row input[type=url]{
+    padding:9px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
+    font-size:13px; background:#fff; color:var(--ink); width:100%; direction:ltr; text-align:left;
+  }
+  .item-image-input{
+    grid-column:1/-1;
+  }
+  .item-image-input label{
+    font-size:12px; color:var(--ink-soft); display:block; margin-bottom:4px;
   }
   .avail-toggle{
     display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; cursor:pointer;
@@ -126,7 +147,7 @@
 </header>
 
 <div class="warn-banner">
-  عدّل الأسماء والأسعار وتوفّر المنتجات هنا كما تحب، ثم اضغط «تصدير الكود المحدث» بالأسفل،
+  عدّل الأسماء والأسعار والصور وتوفّر المنتجات هنا كما تحب، ثم اضغط «تصدير الكود المحدث» بالأسفل،
   انسخ النص، افتح ملف <b>data.js</b> في مجلد المشروع، استبدل محتواه بالكامل بالنص المنسوخ، احفظ،
   ثم من GitHub Desktop اكتب وصف التغيير واضغط Commit ثم Push. هذه الصفحة لا تحفظ التغييرات
   تلقائيًا على الإنترنت.
@@ -138,7 +159,7 @@
 
 <div class="bottom-bar">
   <button class="btn-secondary" id="previewBtn">👁 معاينة القائمة</button>
-  <button class="btn-secondary" id="qrcodeBtn">📱 البارकود</button>
+  <button class="btn-secondary" id="qrcodeBtn">📱 الباركود</button>
   <button class="btn-primary" id="exportBtn">تصدير الكود المحدث ⇩</button>
 </div>
 
@@ -171,7 +192,6 @@
 <script src="data.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  // نسخة عاملة قابلة للتعديل في الذاكرة
   let workingData = JSON.parse(JSON.stringify(CATEGORIES));
   let shopAr = SHOP_NAME_AR, shopEn = SHOP_NAME_EN, currency = CURRENCY_LABEL;
   let catCounter = workingData.length;
@@ -200,13 +220,20 @@
         const row = document.createElement('div');
         row.className = 'item-row';
         row.innerHTML = `
-          <input type="text" value="${escapeHtml(it.nameAr)}" data-ci="${ci}" data-ii="${ii}" data-field="nameAr">
-          <input type="number" step="0.001" value="${it.price}" data-ci="${ci}" data-ii="${ii}" data-field="price">
-          <label class="avail-toggle">
-            <input type="checkbox" ${it.available!==false?'checked':''} data-ci="${ci}" data-ii="${ii}" data-field="available">
-            متوفر
-          </label>
-          <button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button>
+          <div class="item-row-header">
+            <img src="${it.image || ''}" alt="صورة" class="item-image-preview" onerror="this.style.opacity='0.3'">
+            <input type="text" value="${escapeHtml(it.nameAr)}" data-ci="${ci}" data-ii="${ii}" data-field="nameAr" placeholder="اسم المنتج بالعربية">
+            <input type="number" step="0.001" value="${it.price}" data-ci="${ci}" data-ii="${ii}" data-field="price" placeholder="السعر">
+            <label class="avail-toggle">
+              <input type="checkbox" ${it.available!==false?'checked':''} data-ci="${ci}" data-ii="${ii}" data-field="available">
+              متوفر
+            </label>
+            <button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button>
+          </div>
+          <div class="item-image-input">
+            <label>رابط الصورة (URL):</label>
+            <input type="url" value="${escapeHtml(it.image || '')}" data-ci="${ci}" data-ii="${ii}" data-field="image" placeholder="https://example.com/image.jpg">
+          </div>
         `;
         itemsWrap.appendChild(row);
       });
@@ -216,6 +243,14 @@
       inp.addEventListener('input', ()=>{
         const ci = +inp.dataset.ci, ii = +inp.dataset.ii, field = inp.dataset.field;
         workingData[ci].items[ii][field] = field==='price' ? parseFloat(inp.value||0) : inp.value;
+      });
+    });
+    container.querySelectorAll('input[data-field="image"]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
+        workingData[ci].items[ii].image = inp.value;
+        const preview = inp.parentElement.parentElement.querySelector('.item-image-preview');
+        preview.src = inp.value;
       });
     });
     container.querySelectorAll('input[data-field="available"]').forEach(inp=>{
@@ -248,7 +283,7 @@
       btn.addEventListener('click', ()=>{
         const ci = +btn.dataset.ci;
         itemCounter++;
-        workingData[ci].items.push({ id: uid('new'), nameAr:'منتج جديد', price:0.500, available:true });
+        workingData[ci].items.push({ id: uid('new'), nameAr:'منتج جديد', nameEn:'New Product', price:0.500, image:'', available:true });
         render();
       });
     });
@@ -270,11 +305,11 @@
     workingData.forEach((cat, ci)=>{
       out += `  {\n    id: "${cat.id}",\n    nameAr: "${cat.nameAr.replace(/"/g,'\\"')}",\n    nameEn: "${(cat.nameEn||'').replace(/"/g,'\\"')}",\n    items: [\n`;
       cat.items.forEach((it, ii)=>{
-        out += `      { id: "${it.id}", nameAr: "${it.nameAr.replace(/"/g,'\\"')}", price: ${Number(it.price).toFixed(3)}, available: ${it.available!==false} }${ii<cat.items.length-1?',':''}\n`;
+        out += `      { id: "${it.id}", nameAr: "${it.nameAr.replace(/"/g,'\\"')}", nameEn: "${(it.nameEn||'').replace(/"/g,'\\"')}", price: ${Number(it.price).toFixed(3)}, image: "${(it.image||'').replace(/"/g,'\\"')}", available: ${it.available!==false} }${ii<cat.items.length-1?',':''}\n`;
       });
       out += `    ]\n  }${ci<workingData.length-1?',':''}\n`;
     });
-    out += `];\n\nconst SHOP_NAME_AR = "${shopAr}";\nconst SHOP_NAME_EN = "${shopEn}";\nconst CURRENCY_LABEL = "${currency}";\n`;
+    out += `];\n\nconst SHOP_NAME_AR = "${shopAr}";\nconst SHOP_NAME_EN = "${shopEn}";\nconst CURRENCY_LABEL = "${currency}";\nconst CURRENT_LANG = "ar";\n`;
     return out;
   }
 
