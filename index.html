@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlTag">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -61,12 +61,6 @@
   }
   .search-wrap input::placeholder{ color:var(--ink-soft); }
   .search-icon{ opacity:.55; font-size:15px; }
-  
-  .lang-toggle{
-    background:var(--accent); color:#fff; border:none; border-radius:8px;
-    padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer;
-    font-family:'Tajawal'; white-space:nowrap;
-  }
 
   .cat-nav{
     display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;
@@ -121,12 +115,15 @@
   
   .item-image{
     width:60px; height:60px; border-radius:12px; object-fit:cover;
-    background:var(--line); flex-shrink:0;
+    background:var(--line); flex-shrink:0; display:block;
+  }
+  .item-image.error {
+    display:none !important;
   }
   
   .item-info{ flex:1; min-width:0; }
   .item-name{ font-size:15.5px; font-weight:700; color:var(--ink); }
-  .item-name-en{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .item-name-en{ font-size:12px; color:var(--ink-soft); margin-top:2px; direction:ltr; text-align:right; }
   .item-price{ font-size:13px; color:var(--accent-dark); font-weight:700; margin-top:3px; }
   .item-unavail-tag{ font-size:11px; color:var(--ink-soft); margin-top:3px; }
 
@@ -213,11 +210,12 @@
     margin:16px 0;
   }
   .ticket-row{
-    display:flex; justify-content:space-between; align-items:center;
+    display:flex; justify-content:space-between; align-items:flex-start;
     font-size:14.5px; padding:8px 0; gap:10px;
   }
-  .ticket-row .t-name{ font-weight:700; flex:1; }
-  .ticket-row .t-qty{ color:var(--ink-soft); font-size:13px; }
+  .ticket-row .t-name{ font-weight:700; flex:1; line-height:1.4; }
+  .ticket-row .t-name-en{ font-size:12px; color:var(--ink-soft); direction:ltr; text-align:right; display:block; }
+  .ticket-row .t-qty{ color:var(--ink-soft); font-size:13px; white-space:nowrap; }
   .ticket-row .t-price{ font-weight:700; color:var(--accent-dark); white-space:nowrap; }
   .ticket-remove{
     background:none; border:none; color:var(--ink-soft); font-size:17px;
@@ -263,7 +261,6 @@
       <div class="brand-title brand-font" id="shopNameAr">مخبز صاروج بيكري</div>
       <div class="brand-sub" id="shopNameEn">SAROUJ BAKERY</div>
     </div>
-    <button class="lang-toggle" id="langToggle">🇬🇧 English</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
@@ -275,96 +272,38 @@
 <main id="menuMain"></main>
 
 <div class="float-bar" id="floatBar">
-  <div class="label"><span class="count" id="floatCount">0</span> <span id="floatLabel">اختياراتك</span></div>
-  <button class="cta" id="showTicketBtn"><span id="ticketBtnLabel">عرض على الجرسون</span> ←</button>
+  <div class="label"><span class="count" id="floatCount">0</span> اختياراتك</div>
+  <button class="cta" id="showTicketBtn">عرض على الجرسون ←</button>
 </div>
 
 <div class="overlay" id="overlay">
   <div class="ticket">
     <div class="ticket-head">
       <div class="brand-font" id="ticketShopName">مخبز صاروج بيكري</div>
-      <div class="stamp" id="ticketStamp">يُقدَّم للجرسون</div>
+      <div class="stamp">يُقدَّم للجرسون</div>
     </div>
     <hr class="ticket-divider">
     <div id="ticketBody"></div>
     <hr class="ticket-divider">
     <div class="ticket-total">
-      <span id="ticketTotalLabel">الإجمالي</span>
+      <span>الإجمالي</span>
       <span id="ticketTotal">0.000</span>
     </div>
     <div class="table-select">
-      <label for="tableInput" id="tableLabel">رقم الطاولة (اختياري)</label>
+      <label for="tableInput">رقم الطاولة (اختياري)</label>
       <input id="tableInput" type="text" placeholder="مثال: طاولة 5">
     </div>
     <div class="ticket-actions">
-      <button class="btn btn-secondary" id="backToMenuBtn"><span id="backLabel">رجوع للقائمة</span></button>
-      <button class="btn btn-primary" id="clearTicketBtn"><span id="clearLabel">تفريغ الاختيارات</span></button>
+      <button class="btn btn-secondary" id="backToMenuBtn">رجوع للقائمة</button>
+      <button class="btn btn-primary" id="clearTicketBtn">تفريغ الاختيارات</button>
     </div>
-    <div class="ticket-note" id="ticketNote">أظهر هذه الشاشة للجرسون — هذه ليست عملية شراء إلكترونية</div>
+    <div class="ticket-note">أظهر هذه الشاشة للجرسون — هذه ليست عملية شراء إلكترونية</div>
   </div>
 </div>
 
 <script src="data.js"></script>
 <script>
-  let currentLang = localStorage.getItem('lang') || 'ar';
   const state = {};
-
-  const translations = {
-    ar: {
-      search: 'ابحث عن منتج...',
-      selections: 'اختياراتك',
-      showTicket: 'عرض على الجرسون',
-      unavailable: 'غير متوفر حاليًا',
-      stamp: 'يُقدَّم للجرسون',
-      total: 'الإجمالي',
-      back: 'رجوع للقائمة',
-      clear: 'تفريغ الاختيارات',
-      empty: 'لم تختر أي منتج بعد',
-      note: 'أظهر هذه الشاشة للجرسون — هذه ليست عملية شراء إلكترونية',
-      tableLabel: 'رقم الطاولة (اختياري)',
-      tableExample: 'مثال: طاولة 5',
-      langBtn: '🇬🇧 English',
-      noResults: 'لا توجد نتائج مطابقة لبحثك'
-    },
-    en: {
-      search: 'Search for a product...',
-      selections: 'Your selections',
-      showTicket: 'Show to waiter',
-      unavailable: 'Not available',
-      stamp: 'Present to waiter',
-      total: 'Total',
-      back: 'Back to menu',
-      clear: 'Clear selections',
-      empty: 'No items selected yet',
-      note: 'Show this to the waiter — this is not an electronic purchase',
-      tableLabel: 'Table number (optional)',
-      tableExample: 'Example: Table 5',
-      langBtn: '🇸🇦 العربية',
-      noResults: 'No results found'
-    }
-  };
-
-  function t(key) { return translations[currentLang][key]; }
-
-  function setLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-    document.getElementById('htmlTag').lang = lang;
-    document.getElementById('htmlTag').dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById('langToggle').textContent = t('langBtn');
-    document.getElementById('searchInput').placeholder = t('search');
-    document.getElementById('floatLabel').textContent = t('selections');
-    document.getElementById('ticketBtnLabel').textContent = t('showTicket');
-    document.getElementById('ticketStamp').textContent = t('stamp');
-    document.getElementById('ticketTotalLabel').textContent = t('total');
-    document.getElementById('backLabel').textContent = t('back');
-    document.getElementById('clearLabel').textContent = t('clear');
-    document.getElementById('tableLabel').textContent = t('tableLabel');
-    document.getElementById('tableInput').placeholder = t('tableExample');
-    document.getElementById('ticketNote').textContent = t('note');
-    renderMenu(document.getElementById('searchInput').value);
-    buildNav();
-  }
 
   function money(n){ return n.toFixed(3); }
 
@@ -374,10 +313,6 @@
       if(it) return it;
     }
     return null;
-  }
-
-  function getName(item) {
-    return currentLang === 'ar' ? item.nameAr : (item.nameEn || item.nameAr);
   }
 
   function totalCount(){
@@ -395,7 +330,7 @@
   function buildNav(){
     const nav = document.getElementById('catNav');
     nav.innerHTML = CATEGORIES.map((c,i)=>
-      `<div class="cat-pill${i===0?' active':''}" data-cat="${c.id}">${getName(c)}</div>`
+      `<div class="cat-pill${i===0?' active':''}" data-cat="${c.id}">${c.nameAr}</div>`
     ).join('');
     nav.querySelectorAll('.cat-pill').forEach(pill=>{
       pill.addEventListener('click', ()=>{
@@ -411,21 +346,21 @@
     let anyMatch = false;
 
     CATEGORIES.forEach(cat=>{
-      const items = cat.items.filter(it => !f || getName(it).toLowerCase().includes(f));
+      const items = cat.items.filter(it => !f || it.nameAr.toLowerCase().includes(f));
       if(f && items.length===0) return;
       anyMatch = true;
       html += `<section class="section" id="section-${cat.id}">
-        <div class="section-head"><h2>${getName(cat)}</h2></div>`;
+        <div class="section-head"><h2>${cat.nameAr}</h2></div>`;
       items.forEach(it=>{
         const qty = state[it.id] || 0;
         const selected = qty>0;
         html += `<div class="item-card${selected?' selected':''}${it.available===false?' unavailable':''}" data-id="${it.id}">
-          ${it.image ? `<img src="${it.image}" alt="${getName(it)}" class="item-image" onerror="this.style.display='none'">` : ''}
+          ${it.image ? `<img src="${it.image}" alt="${it.nameAr}" class="item-image" onerror="this.classList.add('error')">` : ''}
           <div class="item-info">
-            <div class="item-name">${getName(it)}</div>
-            ${currentLang === 'ar' && it.nameEn ? `<div class="item-name-en">${it.nameEn}</div>` : ''}
+            <div class="item-name">${it.nameAr}</div>
+            ${it.nameEn ? `<div class="item-name-en">${it.nameEn}</div>` : ''}
             ${it.available===false
-              ? `<div class="item-unavail-tag">${t('unavailable')}</div>`
+              ? `<div class="item-unavail-tag">غير متوفر حاليًا</div>`
               : `<div class="item-price">${money(it.price)} ${CURRENCY_LABEL}</div>`}
           </div>
           <div class="qty-controls">
@@ -443,7 +378,7 @@
     });
 
     if(!anyMatch){
-      html = `<div class="empty-search">${t('noResults')}</div>`;
+      html = `<div class="empty-search">لا توجد نتائج مطابقة لبحثك</div>`;
     }
     main.innerHTML = html;
 
@@ -473,14 +408,17 @@
     const body = document.getElementById('ticketBody');
     const ids = Object.keys(state);
     if(ids.length===0){
-      body.innerHTML = `<div class="ticket-empty">${t('empty')}</div>`;
+      body.innerHTML = `<div class="ticket-empty">لم تختر أي منتج بعد</div>`;
     } else {
       body.innerHTML = ids.map(id=>{
         const it = findItem(id);
         const qty = state[id];
         return `<div class="ticket-row">
           <span class="t-qty">${qty} ×</span>
-          <span class="t-name">${getName(it)}</span>
+          <span class="t-name">
+            ${it.nameAr}
+            ${it.nameEn ? `<span class="t-name-en">${it.nameEn}</span>` : ''}
+          </span>
           <span class="t-price">${money(it.price*qty)}</span>
           <button class="ticket-remove" data-id="${id}">✕</button>
         </div>`;
@@ -498,10 +436,6 @@
       });
     });
   }
-
-  document.getElementById('langToggle').addEventListener('click', ()=>{
-    setLanguage(currentLang === 'ar' ? 'en' : 'ar');
-  });
 
   document.getElementById('shopNameAr').textContent = SHOP_NAME_AR;
   document.getElementById('shopNameEn').textContent = SHOP_NAME_EN;
@@ -524,7 +458,9 @@
     document.getElementById('overlay').classList.remove('open');
   });
 
-  setLanguage(currentLang);
+  buildNav();
+  renderMenu();
+  updateFloatBar();
 </script>
 </body>
 </html>
