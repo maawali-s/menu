@@ -1,0 +1,150 @@
+/* ============================================================
+   بيانات قائمة صاروج بيكري
+   ------------------------------------------------------------
+   طريقة التعديل:
+   - لتغيير سعر: عدّل رقم price فقط (مثال: price: 1.200)
+   - لتغيير اسم: عدّل النص داخل علامتي التنصيص بعد nameAr
+   - لإخفاء منتج مؤقتًا (غير متوفر اليوم) بدون حذفه: غيّر
+     available: true إلى available: false
+   - لإضافة منتج جديد: انسخ سطر { ... } كامل داخل نفس القسم
+     والصقه، ثم عدّل القيم. لا تنسَ الفاصلة "," في نهاية السطر
+     إن لم يكن آخر عنصر بالقسم.
+   - لإضافة قسم جديد: انسخ كتلة { id: ..., nameAr: ..., items: [...] }
+     كاملة والصقها قبل "];" في آخر الملف.
+   بعد التعديل: احفظ الملف، ثم من GitHub Desktop اكتب وصف
+   للتغيير واضغط Commit ثم Push origin.
+   ============================================================ */
+
+const CATEGORIES = [
+  {
+    id: "iced-tea",
+    nameAr: "الشاي المثلج",
+    nameEn: "Iced Tea",
+    items: [
+      { id: "it-1", nameAr: "خوخ وباشن", price: 1.000, available: true },
+      { id: "it-2", nameAr: "مانجو", price: 1.000, available: true },
+      { id: "it-3", nameAr: "فراولة", price: 1.000, available: true },
+      { id: "it-4", nameAr: "توت أزرق", price: 1.000, available: true }
+    ]
+  },
+  {
+    id: "teapot",
+    nameAr: "أباريق الشاي",
+    nameEn: "Teapot",
+    items: [
+      { id: "tp-1", nameAr: "أزهار البابونج", price: 0.700, available: true },
+      { id: "tp-2", nameAr: "الزعفران", price: 0.700, available: true },
+      { id: "tp-3", nameAr: "الليمون والزنجبيل", price: 0.700, available: true },
+      { id: "tp-4", nameAr: "لافندر", price: 0.700, available: true }
+    ]
+  },
+  {
+    id: "mojitos",
+    nameAr: "موهيتو",
+    nameEn: "Mojitos",
+    items: [
+      { id: "mj-1", nameAr: "الفراولة", price: 1.000, available: true },
+      { id: "mj-2", nameAr: "الخوخ", price: 1.000, available: true },
+      { id: "mj-3", nameAr: "التوت الأزرق", price: 1.000, available: true },
+      { id: "mj-4", nameAr: "الليمون", price: 1.000, available: true },
+      { id: "mj-5", nameAr: "الرمان", price: 1.000, available: true },
+      { id: "mj-6", nameAr: "باشن", price: 1.000, available: true }
+    ]
+  },
+  {
+    id: "ice-cream",
+    nameAr: "آيسكريم",
+    nameEn: "Ice Cream",
+    items: [
+      { id: "ic-1", nameAr: "مخروط فراولة", price: 1.600, available: true },
+      { id: "ic-2", nameAr: "مخروط فانيلا", price: 1.600, available: true },
+      { id: "ic-3", nameAr: "مخروط مكس", price: 1.600, available: true },
+      { id: "ic-4", nameAr: "كوب فراولة", price: 0.900, available: true },
+      { id: "ic-5", nameAr: "كوب فانيلا", price: 0.900, available: true },
+      { id: "ic-6", nameAr: "كوب مكس", price: 0.900, available: true }
+    ]
+  },
+  {
+    id: "cold-coffee",
+    nameAr: "القهوة الباردة",
+    nameEn: "Cold Coffee",
+    items: [
+      { id: "cc-1", nameAr: "سبانيش لاتيه", price: 1.300, available: true },
+      { id: "cc-2", nameAr: "كرامل لاتيه", price: 1.300, available: true },
+      { id: "cc-3", nameAr: "زعفران لاتيه", price: 1.300, available: true },
+      { id: "cc-4", nameAr: "بيستاشيو لاتيه", price: 1.300, available: true },
+      { id: "cc-5", nameAr: "دارك موكا", price: 1.300, available: true },
+      { id: "cc-6", nameAr: "وايت موكا", price: 1.300, available: true },
+      { id: "cc-7", nameAr: "كركديه", price: 1.000, available: true },
+      { id: "cc-8", nameAr: "كورتادو", price: 1.300, available: true },
+      { id: "cc-9", nameAr: "ماتشا", price: 1.400, available: true },
+      { id: "cc-10", nameAr: "أفوكاتو", price: 1.500, available: true },
+      { id: "cc-11", nameAr: "كريمي إسبريسو", price: 1.400, available: true },
+      { id: "cc-12", nameAr: "روز لاتيه", price: 1.300, available: true },
+      { id: "cc-13", nameAr: "ماء", price: 0.100, available: true }
+    ]
+  },
+  {
+    id: "frappe",
+    nameAr: "فراب",
+    nameEn: "Frappe",
+    items: [
+      { id: "fr-1", nameAr: "بيستاشيو فراب", price: 1.800, available: true },
+      { id: "fr-2", nameAr: "كرامل فراب", price: 1.800, available: true },
+      { id: "fr-3", nameAr: "موكا فراب", price: 1.800, available: true }
+    ]
+  },
+  {
+    id: "hot-coffee",
+    nameAr: "القهوة الساخنة",
+    nameEn: "Hot Coffee",
+    items: [
+      { id: "hc-1", nameAr: "سبانيش لاتيه", price: 1.300, available: true },
+      { id: "hc-2", nameAr: "كرامل لاتيه", price: 1.300, available: true },
+      { id: "hc-3", nameAr: "زعفران لاتيه", price: 1.300, available: true },
+      { id: "hc-4", nameAr: "بيستاشيو لاتيه", price: 1.300, available: true },
+      { id: "hc-5", nameAr: "موكا", price: 1.300, available: true },
+      { id: "hc-6", nameAr: "كورتادو", price: 1.300, available: true },
+      { id: "hc-7", nameAr: "ماتشا", price: 1.400, available: true },
+      { id: "hc-8", nameAr: "كابتشينو", price: 1.200, available: true },
+      { id: "hc-9", nameAr: "لاتيه", price: 1.300, available: true },
+      { id: "hc-10", nameAr: "فلات وايت", price: 1.300, available: true },
+      { id: "hc-11", nameAr: "إسبريسو", price: 0.900, available: true },
+      { id: "hc-12", nameAr: "أمريكانو", price: 1.000, available: true },
+      { id: "hc-13", nameAr: "هوت شوكليت", price: 1.400, available: true },
+      { id: "hc-14", nameAr: "قهوة عمانية", price: 1.000, available: true }
+    ]
+  },
+  {
+    id: "cold-brew",
+    nameAr: "كولد برو / مشروبات خاصة",
+    nameEn: "Cold Brew / Speciality",
+    items: [
+      { id: "cb-1", nameAr: "V60 كلاسيك", price: 1.500, available: true },
+      { id: "cb-2", nameAr: "V60 فروتي", price: 1.600, available: true },
+      { id: "cb-3", nameAr: "كولد برو", price: 1.600, available: true }
+    ]
+  },
+  {
+    id: "bakery",
+    nameAr: "الحلويات والمخبوزات",
+    nameEn: "Dessert & Bakery",
+    items: [
+      { id: "bk-1", nameAr: "كرواسون سادة", price: 1.000, available: true },
+      { id: "bk-2", nameAr: "كرواسون شوكليت", price: 1.400, available: true },
+      { id: "bk-3", nameAr: "كرواسون تركي", price: 1.700, available: true },
+      { id: "bk-4", nameAr: "كرواسون حلومي", price: 1.700, available: true },
+      { id: "bk-5", nameAr: "كرواسون بيض", price: 1.700, available: true },
+      { id: "bk-6", nameAr: "دانيش بيري", price: 1.000, available: true },
+      { id: "bk-7", nameAr: "شوكليت كيك", price: 2.500, available: true },
+      { id: "bk-8", nameAr: "كريمي كيك", price: 2.500, available: true },
+      { id: "bk-9", nameAr: "كيكة التمر", price: 2.500, available: true },
+      { id: "bk-10", nameAr: "بيستاشيو كيك", price: 2.500, available: true }
+    ]
+  }
+];
+
+/* اسم المخبز وعملة الأسعار - تقدر تعدلهم هنا */
+const SHOP_NAME_AR = "مخبز صاروج بيكري";
+const SHOP_NAME_EN = "Sarouj Bakery";
+const CURRENCY_LABEL = "ر.ع.";

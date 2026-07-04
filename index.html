@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>مخبز صاروج بيكري | القائمة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6EEE1;
+    --bg-card:#FFFBF3;
+    --paper:#EFE1C7;
+    --ink:#3B2A1E;
+    --ink-soft:#7A6650;
+    --accent:#C1704A;
+    --accent-dark:#9C5636;
+    --gold:#B8894A;
+    --line:#E2D2B4;
+    --shadow: 0 6px 18px rgba(59,42,30,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  html,body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Tajawal',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .brand-font{ font-family:'Aref Ruqaa', serif; }
+
+  a{ color:inherit; }
+
+  /* ===== الشريط العلوي ===== */
+  header.top{
+    position:sticky; top:0; z-index:30;
+    background:var(--bg);
+    padding:18px 20px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .brand-title{
+    font-size:26px; font-weight:700; color:var(--ink);
+    letter-spacing:0.5px;
+  }
+  .brand-sub{
+    font-size:11px; color:var(--ink-soft); letter-spacing:2px; text-transform:uppercase;
+  }
+  .search-wrap{
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-card); border:1px solid var(--line);
+    border-radius:14px; padding:10px 14px; margin-bottom:12px;
+  }
+  .search-wrap input{
+    border:none; outline:none; background:transparent; flex:1;
+    font-family:'Tajawal'; font-size:15px; color:var(--ink);
+  }
+  .search-wrap input::placeholder{ color:var(--ink-soft); }
+  .search-icon{ opacity:.55; font-size:15px; }
+
+  .cat-nav{
+    display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .cat-nav::-webkit-scrollbar{ display:none; }
+  .cat-pill{
+    flex:0 0 auto;
+    padding:9px 16px;
+    border-radius:999px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    font-size:13.5px; font-weight:700;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:.18s;
+  }
+  .cat-pill.active{
+    background:var(--accent); color:#fff; border-color:var(--accent);
+  }
+
+  /* ===== الأقسام ===== */
+  main{ padding:8px 20px 130px; max-width:640px; margin:0 auto; }
+  .section{ margin-top:30px; scroll-margin-top:118px; }
+  .section-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .section-head h2{
+    font-family:'Aref Ruqaa', serif;
+    font-size:23px; font-weight:700; margin:0; color:var(--ink);
+  }
+  .section-head::after{
+    content:""; flex:1; height:1px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 12px);
+  }
+
+  .item-card{
+    display:flex; align-items:center; gap:12px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:13px 14px;
+    margin-bottom:10px;
+    box-shadow:var(--shadow);
+    transition:.15s;
+  }
+  .item-card.selected{
+    border-color:var(--accent);
+    background:#FFF6EF;
+  }
+  .item-card.unavailable{ opacity:.45; }
+  .item-info{ flex:1; min-width:0; }
+  .item-name{ font-size:15.5px; font-weight:700; color:var(--ink); }
+  .item-price{ font-size:13px; color:var(--accent-dark); font-weight:700; margin-top:3px; }
+  .item-unavail-tag{ font-size:11px; color:var(--ink-soft); margin-top:3px; }
+
+  .qty-controls{ display:flex; align-items:center; gap:10px; }
+  .add-btn{
+    width:36px; height:36px; border-radius:50%;
+    background:var(--accent); color:#fff; border:none;
+    font-size:20px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .add-btn:active{ transform:scale(.92); }
+  .qty-btn{
+    width:30px; height:30px; border-radius:50%;
+    background:transparent; border:1.5px solid var(--accent);
+    color:var(--accent); font-size:17px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qty-val{ min-width:18px; text-align:center; font-weight:700; }
+
+  .empty-search{
+    text-align:center; color:var(--ink-soft); padding:60px 20px; font-size:14px;
+  }
+
+  /* ===== الشريط السفلي العائم ===== */
+  .float-bar{
+    position:fixed; left:16px; right:16px; bottom:16px; z-index:40;
+    background:var(--ink); color:#fff;
+    border-radius:18px;
+    padding:15px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    transform:translateY(120%);
+    transition:transform .25s ease;
+    max-width:608px; margin:0 auto;
+  }
+  .float-bar.show{ transform:translateY(0); }
+  .float-bar .count{
+    background:var(--accent); border-radius:50%;
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; margin-left:10px;
+  }
+  .float-bar .label{ display:flex; align-items:center; font-weight:700; font-size:15px; }
+  .float-bar .cta{
+    background:#fff; color:var(--ink); border:none; border-radius:12px;
+    padding:10px 18px; font-weight:700; font-size:14px; cursor:pointer;
+    font-family:'Tajawal';
+  }
+
+  /* ===== نافذة تذكرة الجرسون ===== */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,14,8,.55);
+    display:none; align-items:flex-end; justify-content:center;
+    z-index:50; padding:0;
+  }
+  .overlay.open{ display:flex; }
+  .ticket{
+    position:relative;
+    background:var(--paper);
+    width:100%; max-width:480px;
+    max-height:88vh; overflow-y:auto;
+    border-radius:20px 20px 0 0;
+    padding:34px 26px 26px;
+    animation:slideUp .28s ease;
+  }
+  @keyframes slideUp{ from{ transform:translateY(40px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .ticket::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:14px;
+    background:
+      linear-gradient(135deg, transparent 50%, var(--paper) 50%) 0 0/14px 14px repeat-x,
+      linear-gradient(-135deg, transparent 50%, var(--paper) 50%) 0 0/14px 14px repeat-x;
+    background-color:rgba(20,14,8,.55);
+    transform:translateY(-13px);
+  }
+  .ticket-head{ text-align:center; margin-bottom:6px; }
+  .ticket-head .brand-font{ font-size:24px; font-weight:700; }
+  .ticket-head .stamp{
+    display:inline-block; margin-top:6px;
+    border:2px solid var(--accent); color:var(--accent-dark);
+    border-radius:8px; padding:3px 12px; font-size:11px; font-weight:700;
+    transform:rotate(-2deg); letter-spacing:1px;
+  }
+  .ticket-divider{
+    border:none; border-top:1.5px dashed var(--ink-soft); opacity:.4;
+    margin:16px 0;
+  }
+  .ticket-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:14.5px; padding:8px 0; gap:10px;
+  }
+  .ticket-row .t-name{ font-weight:700; flex:1; }
+  .ticket-row .t-qty{ color:var(--ink-soft); font-size:13px; }
+  .ticket-row .t-price{ font-weight:700; color:var(--accent-dark); white-space:nowrap; }
+  .ticket-remove{
+    background:none; border:none; color:var(--ink-soft); font-size:17px;
+    cursor:pointer; padding:0 2px;
+  }
+  .ticket-total{
+    display:flex; justify-content:space-between; font-size:17px; font-weight:900;
+    margin-top:6px;
+  }
+  .table-select{
+    margin-top:18px;
+  }
+  .table-select label{ font-size:13px; color:var(--ink-soft); display:block; margin-bottom:6px; }
+  .table-select input{
+    width:100%; padding:11px 14px; border-radius:12px; border:1px solid var(--line);
+    background:var(--bg-card); font-family:'Tajawal'; font-size:15px; color:var(--ink);
+    outline:none;
+  }
+  .ticket-actions{ display:flex; gap:10px; margin-top:22px; }
+  .btn{
+    flex:1; padding:13px; border-radius:13px; border:none;
+    font-family:'Tajawal'; font-weight:700; font-size:14.5px; cursor:pointer;
+  }
+  .btn-secondary{ background:var(--bg-card); color:var(--ink); border:1px solid var(--line); }
+  .btn-primary{ background:var(--accent); color:#fff; }
+  .ticket-note{
+    text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:14px; line-height:1.6;
+  }
+  .ticket-empty{ text-align:center; padding:30px 10px; color:var(--ink-soft); }
+
+  @media (min-width:520px){
+    .overlay{ align-items:center; }
+    .ticket{ border-radius:20px; }
+    .ticket::before{ border-radius:20px 20px 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand-row">
+    <div>
+      <div class="brand-title brand-font" id="shopNameAr">مخبز صاروج بيكري</div>
+      <div class="brand-sub" id="shopNameEn">SAROUJ BAKERY</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="searchInput" type="text" placeholder="ابحث عن منتج...">
+  </div>
+  <nav class="cat-nav" id="catNav"></nav>
+</header>
+
+<main id="menuMain"></main>
+
+<div class="float-bar" id="floatBar">
+  <div class="label"><span class="count" id="floatCount">0</span> اختياراتك</div>
+  <button class="cta" id="showTicketBtn">عرض على الجرسون ←</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ticket">
+    <div class="ticket-head">
+      <div class="brand-font" id="ticketShopName">مخبز صاروج بيكري</div>
+      <div class="stamp">يُقدَّم للجرسون</div>
+    </div>
+    <hr class="ticket-divider">
+    <div id="ticketBody"></div>
+    <hr class="ticket-divider">
+    <div class="ticket-total">
+      <span>الإجمالي</span>
+      <span id="ticketTotal">0.000</span>
+    </div>
+    <div class="table-select">
+      <label for="tableInput">رقم الطاولة (اختياري)</label>
+      <input id="tableInput" type="text" placeholder="مثال: طاولة 5">
+    </div>
+    <div class="ticket-actions">
+      <button class="btn btn-secondary" id="backToMenuBtn">رجوع للقائمة</button>
+      <button class="btn btn-primary" id="clearTicketBtn">تفريغ الاختيارات</button>
+    </div>
+    <div class="ticket-note">أظهر هذه الشاشة للجرسون — هذه ليست عملية شراء إلكترونية</div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const state = {}; // { itemId: qty }
+
+  function money(n){ return n.toFixed(3); }
+
+  function findItem(id){
+    for(const cat of CATEGORIES){
+      const it = cat.items.find(i=>i.id===id);
+      if(it) return it;
+    }
+    return null;
+  }
+
+  function totalCount(){
+    return Object.values(state).reduce((a,b)=>a+b,0);
+  }
+  function totalPrice(){
+    let sum=0;
+    for(const id in state){
+      const it = findItem(id);
+      if(it) sum += it.price * state[id];
+    }
+    return sum;
+  }
+
+  function buildNav(){
+    const nav = document.getElementById('catNav');
+    nav.innerHTML = CATEGORIES.map((c,i)=>
+      `<div class="cat-pill${i===0?' active':''}" data-cat="${c.id}">${c.nameAr}</div>`
+    ).join('');
+    nav.querySelectorAll('.cat-pill').forEach(pill=>{
+      pill.addEventListener('click', ()=>{
+        document.getElementById('section-'+pill.dataset.cat).scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+  }
+
+  function renderMenu(filter=''){
+    const main = document.getElementById('menuMain');
+    const f = filter.trim().toLowerCase();
+    let html = '';
+    let anyMatch = false;
+
+    CATEGORIES.forEach(cat=>{
+      const items = cat.items.filter(it => !f || it.nameAr.toLowerCase().includes(f));
+      if(f && items.length===0) return;
+      anyMatch = true;
+      html += `<section class="section" id="section-${cat.id}">
+        <div class="section-head"><h2>${cat.nameAr}</h2></div>`;
+      items.forEach(it=>{
+        const qty = state[it.id] || 0;
+        const selected = qty>0;
+        html += `<div class="item-card${selected?' selected':''}${it.available===false?' unavailable':''}" data-id="${it.id}">
+          <div class="item-info">
+            <div class="item-name">${it.nameAr}</div>
+            ${it.available===false
+              ? `<div class="item-unavail-tag">غير متوفر حاليًا</div>`
+              : `<div class="item-price">${money(it.price)} ${CURRENCY_LABEL}</div>`}
+          </div>
+          <div class="qty-controls">
+            ${it.available===false ? '' : (
+              selected
+              ? `<button class="qty-btn" data-action="dec" data-id="${it.id}">−</button>
+                 <span class="qty-val">${qty}</span>
+                 <button class="qty-btn" data-action="inc" data-id="${it.id}">+</button>`
+              : `<button class="add-btn" data-action="inc" data-id="${it.id}">+</button>`
+            )}
+          </div>
+        </div>`;
+      });
+      html += `</section>`;
+    });
+
+    if(!anyMatch){
+      html = `<div class="empty-search">لا توجد نتائج مطابقة لبحثك</div>`;
+    }
+    main.innerHTML = html;
+
+    main.querySelectorAll('[data-action]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        if(action==='inc') state[id] = (state[id]||0)+1;
+        if(action==='dec'){
+          state[id] = (state[id]||0)-1;
+          if(state[id]<=0) delete state[id];
+        }
+        renderMenu(document.getElementById('searchInput').value);
+        updateFloatBar();
+      });
+    });
+  }
+
+  function updateFloatBar(){
+    const bar = document.getElementById('floatBar');
+    const count = totalCount();
+    document.getElementById('floatCount').textContent = count;
+    bar.classList.toggle('show', count>0);
+  }
+
+  function openTicket(){
+    const body = document.getElementById('ticketBody');
+    const ids = Object.keys(state);
+    if(ids.length===0){
+      body.innerHTML = `<div class="ticket-empty">لم تختر أي منتج بعد</div>`;
+    } else {
+      body.innerHTML = ids.map(id=>{
+        const it = findItem(id);
+        const qty = state[id];
+        return `<div class="ticket-row">
+          <span class="t-qty">${qty} ×</span>
+          <span class="t-name">${it.nameAr}</span>
+          <span class="t-price">${money(it.price*qty)}</span>
+          <button class="ticket-remove" data-id="${id}">✕</button>
+        </div>`;
+      }).join('');
+    }
+    document.getElementById('ticketTotal').textContent = money(totalPrice()) + ' ' + CURRENCY_LABEL;
+    document.getElementById('overlay').classList.add('open');
+
+    body.querySelectorAll('.ticket-remove').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        delete state[b.dataset.id];
+        renderMenu(document.getElementById('searchInput').value);
+        updateFloatBar();
+        openTicket();
+      });
+    });
+  }
+
+  document.getElementById('shopNameAr').textContent = SHOP_NAME_AR;
+  document.getElementById('shopNameEn').textContent = SHOP_NAME_EN;
+  document.getElementById('ticketShopName').textContent = SHOP_NAME_AR;
+
+  document.getElementById('searchInput').addEventListener('input', (e)=>{
+    renderMenu(e.target.value);
+  });
+  document.getElementById('showTicketBtn').addEventListener('click', openTicket);
+  document.getElementById('backToMenuBtn').addEventListener('click', ()=>{
+    document.getElementById('overlay').classList.remove('open');
+  });
+  document.getElementById('overlay').addEventListener('click', (e)=>{
+    if(e.target.id==='overlay') document.getElementById('overlay').classList.remove('open');
+  });
+  document.getElementById('clearTicketBtn').addEventListener('click', ()=>{
+    for(const k in state) delete state[k];
+    renderMenu(document.getElementById('searchInput').value);
+    updateFloatBar();
+    document.getElementById('overlay').classList.remove('open');
+  });
+
+  buildNav();
+  renderMenu();
+  updateFloatBar();
+</script>
+</body>
+</html>

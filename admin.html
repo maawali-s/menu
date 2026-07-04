@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة | صاروج بيكري</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6EEE1; --bg-card:#FFFBF3; --ink:#3B2A1E; --ink-soft:#7A6650;
+    --accent:#C1704A; --accent-dark:#9C5636; --line:#E2D2B4; --danger:#B3413A;
+    --shadow:0 6px 18px rgba(59,42,30,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Tajawal',sans-serif;}
+  header{
+    padding:20px; background:var(--ink); color:#fff;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  header h1{ font-family:'Aref Ruqaa',serif; font-size:22px; margin:0; }
+  header p{ margin:4px 0 0; font-size:12px; color:#D8C7AE; }
+  .warn-banner{
+    background:#FCEFD9; border-bottom:1px solid var(--line); color:var(--ink-soft);
+    font-size:12.5px; padding:10px 20px; line-height:1.7;
+  }
+  main{ max-width:760px; margin:0 auto; padding:20px 16px 90px; }
+
+  .cat-block{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px;
+    padding:16px; margin-bottom:18px; box-shadow:var(--shadow);
+  }
+  .cat-block-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+  }
+  .cat-block-head input.cat-name{
+    font-family:'Aref Ruqaa',serif; font-size:19px; font-weight:700;
+    border:none; background:transparent; flex:1; color:var(--ink); outline:none;
+    border-bottom:1px dashed transparent;
+  }
+  .cat-block-head input.cat-name:focus{ border-bottom-color:var(--accent); }
+  .del-cat{ background:none; border:none; color:var(--danger); font-size:13px; cursor:pointer; }
+
+  .item-row{
+    display:grid; grid-template-columns: 1fr 90px 70px 30px; gap:8px; align-items:center;
+    margin-bottom:8px;
+  }
+  .item-row input[type=text]{
+    padding:9px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
+    font-size:14px; background:#fff; color:var(--ink); width:100%;
+  }
+  .item-row input[type=number]{
+    padding:9px 8px; border:1px solid var(--line); border-radius:10px; font-family:'Tajawal';
+    font-size:14px; background:#fff; color:var(--ink); width:100%;
+  }
+  .avail-toggle{
+    display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .avail-toggle input{ transform:scale(1.15); }
+  .del-item{ background:none; border:none; color:var(--danger); font-size:16px; cursor:pointer; }
+
+  .add-item-btn{
+    background:none; border:1.5px dashed var(--accent); color:var(--accent-dark);
+    border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;
+    width:100%; margin-top:4px; font-family:'Tajawal';
+  }
+
+  .add-cat-btn{
+    background:var(--bg-card); border:1.5px dashed var(--line); color:var(--ink-soft);
+    border-radius:14px; padding:14px; font-size:14px; font-weight:700; cursor:pointer;
+    width:100%; font-family:'Tajawal';
+  }
+
+  .bottom-bar{
+    position:fixed; bottom:0; left:0; right:0; background:var(--ink); padding:14px 20px;
+    display:flex; gap:10px; justify-content:center; z-index:10;
+  }
+  .bottom-bar button{
+    padding:12px 20px; border-radius:12px; border:none; font-weight:700; font-size:14px;
+    cursor:pointer; font-family:'Tajawal';
+  }
+  .btn-primary{ background:var(--accent); color:#fff; }
+  .btn-secondary{ background:#fff; color:var(--ink); }
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(20,14,8,.6); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:16px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:#fff; border-radius:16px; padding:20px; max-width:560px; width:100%;
+    max-height:80vh; display:flex; flex-direction:column;
+  }
+  .modal h3{ margin-top:0; font-size:16px; }
+  .modal textarea{
+    flex:1; width:100%; min-height:280px; font-family:monospace; font-size:12.5px;
+    border:1px solid var(--line); border-radius:10px; padding:10px; direction:ltr; text-align:left;
+    resize:vertical;
+  }
+  .modal-actions{ display:flex; gap:10px; margin-top:12px; }
+  .modal-actions button{
+    flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; cursor:pointer;
+    font-family:'Tajawal'; font-size:13.5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>لوحة إدارة القائمة</h1>
+    <p>مخبز صاروج بيكري</p>
+  </div>
+</header>
+
+<div class="warn-banner">
+  عدّل الأسماء والأسعار وتوفّر المنتجات هنا كما تحب، ثم اضغط «تصدير الكود المحدث» بالأسفل،
+  انسخ النص، افتح ملف <b>data.js</b> في مجلد المشروع، استبدل محتواه بالكامل بالنص المنسوخ، احفظ،
+  ثم من GitHub Desktop اكتب وصف التغيير واضغط Commit ثم Push. هذه الصفحة لا تحفظ التغييرات
+  تلقائيًا على الإنترنت.
+</div>
+
+<main id="catContainer"></main>
+
+<button class="add-cat-btn" id="addCatBtn" style="max-width:760px;margin:0 auto 40px;display:block;width:calc(100% - 32px);">+ إضافة قسم جديد</button>
+
+<div class="bottom-bar">
+  <button class="btn-secondary" id="previewBtn">👁 معاينة القائمة</button>
+  <button class="btn-primary" id="exportBtn">تصدير الكود المحدث ⇩</button>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>انسخ هذا النص بالكامل إلى ملف data.js</h3>
+    <textarea id="exportArea" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="closeModalBtn">إغلاق</button>
+      <button class="btn-primary" id="copyBtn">نسخ النص</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+  // نسخة عاملة قابلة للتعديل في الذاكرة
+  let workingData = JSON.parse(JSON.stringify(CATEGORIES));
+  let shopAr = SHOP_NAME_AR, shopEn = SHOP_NAME_EN, currency = CURRENCY_LABEL;
+  let catCounter = workingData.length;
+  let itemCounter = 0;
+  workingData.forEach(c=>c.items.forEach(()=>itemCounter++));
+
+  function uid(prefix){ return prefix + '-' + Math.random().toString(36).slice(2,8); }
+
+  function render(){
+    const container = document.getElementById('catContainer');
+    container.innerHTML = '';
+    workingData.forEach((cat, ci)=>{
+      const block = document.createElement('div');
+      block.className = 'cat-block';
+      block.innerHTML = `
+        <div class="cat-block-head">
+          <input type="text" class="cat-name" value="${escapeHtml(cat.nameAr)}" data-ci="${ci}">
+          <button class="del-cat" data-ci="${ci}">حذف القسم ✕</button>
+        </div>
+        <div class="items-wrap" data-ci="${ci}"></div>
+        <button class="add-item-btn" data-ci="${ci}">+ إضافة منتج لهذا القسم</button>
+      `;
+      container.appendChild(block);
+      const itemsWrap = block.querySelector('.items-wrap');
+      cat.items.forEach((it, ii)=>{
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <input type="text" value="${escapeHtml(it.nameAr)}" data-ci="${ci}" data-ii="${ii}" data-field="nameAr">
+          <input type="number" step="0.001" value="${it.price}" data-ci="${ci}" data-ii="${ii}" data-field="price">
+          <label class="avail-toggle">
+            <input type="checkbox" ${it.available!==false?'checked':''} data-ci="${ci}" data-ii="${ii}" data-field="available">
+            متوفر
+          </label>
+          <button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button>
+        `;
+        itemsWrap.appendChild(row);
+      });
+    });
+
+    container.querySelectorAll('input[data-field="nameAr"], input[data-field="price"]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const ci = +inp.dataset.ci, ii = +inp.dataset.ii, field = inp.dataset.field;
+        workingData[ci].items[ii][field] = field==='price' ? parseFloat(inp.value||0) : inp.value;
+      });
+    });
+    container.querySelectorAll('input[data-field="available"]').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
+        workingData[ci].items[ii].available = inp.checked;
+      });
+    });
+    container.querySelectorAll('.cat-name').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        workingData[+inp.dataset.ci].nameAr = inp.value;
+      });
+    });
+    container.querySelectorAll('.del-item').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const ci = +btn.dataset.ci, ii = +btn.dataset.ii;
+        workingData[ci].items.splice(ii,1);
+        render();
+      });
+    });
+    container.querySelectorAll('.del-cat').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(confirm('حذف هذا القسم بكل منتجاته؟')){
+          workingData.splice(+btn.dataset.ci,1);
+          render();
+        }
+      });
+    });
+    container.querySelectorAll('.add-item-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const ci = +btn.dataset.ci;
+        itemCounter++;
+        workingData[ci].items.push({ id: uid('new'), nameAr:'منتج جديد', price:0.500, available:true });
+        render();
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  document.getElementById('addCatBtn').addEventListener('click', ()=>{
+    catCounter++;
+    workingData.push({ id: uid('cat'), nameAr:'قسم جديد', nameEn:'New Category', items:[] });
+    render();
+  });
+
+  function generateCode(){
+    let out = `/* تم إنشاء هذا الملف عبر لوحة الإدارة - الصق هذا المحتوى بالكامل في data.js */\n\n`;
+    out += `const CATEGORIES = [\n`;
+    workingData.forEach((cat, ci)=>{
+      out += `  {\n    id: "${cat.id}",\n    nameAr: "${cat.nameAr.replace(/"/g,'\\"')}",\n    nameEn: "${(cat.nameEn||'').replace(/"/g,'\\"')}",\n    items: [\n`;
+      cat.items.forEach((it, ii)=>{
+        out += `      { id: "${it.id}", nameAr: "${it.nameAr.replace(/"/g,'\\"')}", price: ${Number(it.price).toFixed(3)}, available: ${it.available!==false} }${ii<cat.items.length-1?',':''}\n`;
+      });
+      out += `    ]\n  }${ci<workingData.length-1?',':''}\n`;
+    });
+    out += `];\n\nconst SHOP_NAME_AR = "${shopAr}";\nconst SHOP_NAME_EN = "${shopEn}";\nconst CURRENCY_LABEL = "${currency}";\n`;
+    return out;
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    document.getElementById('exportArea').value = generateCode();
+    document.getElementById('modalOverlay').classList.add('open');
+  });
+  document.getElementById('closeModalBtn').addEventListener('click', ()=>{
+    document.getElementById('modalOverlay').classList.remove('open');
+  });
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    const area = document.getElementById('exportArea');
+    area.select();
+    document.execCommand('copy');
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'تم النسخ ✓';
+    setTimeout(()=>btn.textContent='نسخ النص', 1500);
+  });
+  document.getElementById('previewBtn').addEventListener('click', ()=>{
+    window.open('index.html','_blank');
+  });
+
+  render();
+</script>
+</body>
+</html>
