@@ -74,6 +74,24 @@
   .item-image-input label{
     font-size:12px; color:var(--ink-soft); display:block; margin-bottom:4px;
   }
+  .image-upload-group{
+    display:flex; gap:8px; align-items:center;
+  }
+  .image-upload-group input[type=file]{
+    flex:1; padding:6px 8px; border:1px solid var(--line); border-radius:8px;
+    font-size:12px; font-family:'Tajawal';
+  }
+  .image-upload-btn{
+    background:var(--accent); color:#fff; border:none; border-radius:8px;
+    padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer;
+    font-family:'Tajawal'; white-space:nowrap;
+  }
+  .image-upload-btn:disabled{
+    background:var(--ink-soft); cursor:not-allowed;
+  }
+  .image-url-input{
+    margin-top:6px;
+  }
   .avail-toggle{
     display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; cursor:pointer;
     color:var(--ink-soft);
@@ -135,6 +153,10 @@
     padding:10px; font-size:12px; word-break:break-all; margin:10px 0; font-family:monospace;
     direction:ltr; text-align:left;
   }
+
+  .upload-status{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+  .upload-status.success{ color:#2d8659; }
+  .upload-status.error{ color:var(--danger); }
 </style>
 </head>
 <body>
@@ -191,7 +213,13 @@
 
 <script src="data.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const SUPABASE_URL = 'https://swgykbxckelpvgwgneal.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_F9N5hjb5Q0wlw-1wHR2_eQ_vuMb9YpD';
+  
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   let workingData = JSON.parse(JSON.stringify(CATEGORIES));
   let shopAr = SHOP_NAME_AR, shopEn = SHOP_NAME_EN, currency = CURRENCY_LABEL;
   let catCounter = workingData.length;
@@ -199,6 +227,29 @@
   workingData.forEach(c=>c.items.forEach(()=>itemCounter++));
 
   function uid(prefix){ return prefix + '-' + Math.random().toString(36).slice(2,8); }
+
+  async function uploadImageToSupabase(file, itemId) {
+    try {
+      const fileName = `products/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${file.name.replace(/[^a-z0-9.]/gi, '_')}`;
+      const { data, error } = await supabase.storage
+        .from('menu-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+      
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(fileName);
+      
+      return publicUrl;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
+  }
 
   function render(){
     const container = document.getElementById('catContainer');
@@ -231,8 +282,15 @@
             <button class="del-item" data-ci="${ci}" data-ii="${ii}">✕</button>
           </div>
           <div class="item-image-input">
-            <label>رابط الصورة (URL):</label>
-            <input type="url" value="${escapeHtml(it.image || '')}" data-ci="${ci}" data-ii="${ii}" data-field="image" placeholder="https://example.com/image.jpg">
+            <label>الصورة:</label>
+            <div class="image-upload-group">
+              <input type="file" accept="image/*" class="image-file-input" data-ci="${ci}" data-ii="${ii}">
+              <button class="image-upload-btn" data-ci="${ci}" data-ii="${ii}">رفع</button>
+            </div>
+            <div class="image-url-input">
+              <input type="url" value="${escapeHtml(it.image || '')}" data-ci="${ci}" data-ii="${ii}" data-field="image" placeholder="رابط الصورة">
+            </div>
+            <div class="upload-status" data-ci="${ci}" data-ii="${ii}"></div>
           </div>
         `;
         itemsWrap.appendChild(row);
@@ -245,6 +303,7 @@
         workingData[ci].items[ii][field] = field==='price' ? parseFloat(inp.value||0) : inp.value;
       });
     });
+
     container.querySelectorAll('input[data-field="image"]').forEach(inp=>{
       inp.addEventListener('input', ()=>{
         const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
@@ -253,6 +312,40 @@
         preview.src = inp.value;
       });
     });
+
+    container.querySelectorAll('.image-upload-btn').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ci = +btn.dataset.ci, ii = +btn.dataset.ii;
+        const fileInput = btn.previousElementSibling;
+        const file = fileInput.files[0];
+        if(!file) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'جاري...';
+        const statusDiv = btn.parentElement.nextElementSibling.nextElementSibling;
+        
+        try {
+          const url = await uploadImageToSupabase(file, `${ci}-${ii}`);
+          workingData[ci].items[ii].image = url;
+          const urlInput = btn.parentElement.nextElementSibling.querySelector('input[data-field="image"]');
+          urlInput.value = url;
+          const preview = btn.parentElement.parentElement.querySelector('.item-image-preview');
+          preview.src = url;
+          fileInput.value = '';
+          statusDiv.textContent = '✓ تم الرفع بنجاح';
+          statusDiv.classList.add('success');
+          setTimeout(()=>{ statusDiv.textContent = ''; statusDiv.classList.remove('success'); }, 3000);
+        } catch(error){
+          statusDiv.textContent = '✗ خطأ في الرفع: ' + error.message;
+          statusDiv.classList.add('error');
+          console.error(error);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'رفع';
+        }
+      });
+    });
+
     container.querySelectorAll('input[data-field="available"]').forEach(inp=>{
       inp.addEventListener('change', ()=>{
         const ci = +inp.dataset.ci, ii = +inp.dataset.ii;
