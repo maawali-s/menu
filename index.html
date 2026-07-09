@@ -39,9 +39,10 @@
     border-bottom:1px solid var(--line);
   }
   .brand-row{
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:center; justify-content:center;
     margin-bottom:14px;
     gap:10px;
+    position:relative;
   }
   .brand-row div{
     flex:1;
@@ -259,12 +260,8 @@
 
 <header class="top">
   <div class="brand-row">
-    <img src="https://swgykbxckelpvgwgneal.supabase.co/storage/v1/object/public/menu/Sarouj%2006.png" alt="Sarouj Logo" style="height:60px; object-fit:contain;">
-    <div>
-      <div class="brand-title brand-font" id="shopNameAr">صاروج بيكري</div>
-      <div class="brand-sub" id="shopNameEn">SAROUJ BAKERY</div>
-    </div>
-    <button id="langToggleBtn" class="lang-btn">🇴🇲 English</button>
+    <img src="https://swgykbxckelpvgwgneal.supabase.co/storage/v1/object/public/menu/Sarouj%2006.png" alt="Sarouj Logo" style="height:90px; object-fit:contain;">
+    <button id="langToggleBtn" class="lang-btn" style="position:absolute; right:20px; top:20px;">🇴🇲 English</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
@@ -283,7 +280,7 @@
 <div class="overlay" id="overlay">
   <div class="ticket">
     <div class="ticket-head">
-      <div class="brand-font" id="ticketShopName">مخبز صاروج بيكري</div>
+      <div class="brand-font" id="ticketShopName">صاروج بيكري</div>
       <div class="stamp">يُقدَّم للجرسون</div>
     </div>
     <hr class="ticket-divider">
@@ -457,8 +454,6 @@
     });
   }
 
-  document.getElementById('shopNameAr').textContent = SHOP_NAME_AR;
-  document.getElementById('shopNameEn').textContent = SHOP_NAME_EN;
   document.getElementById('ticketShopName').textContent = SHOP_NAME_AR;
 
   document.getElementById('langToggleBtn').addEventListener('click', ()=>{
