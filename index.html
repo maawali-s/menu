@@ -367,7 +367,6 @@
     let anyMatch = false;
 
     CATEGORIES.forEach(cat=>{
-      if(!cat.visible) return;
       const items = cat.items.filter(it => it.available!==false && (!f || getName(it).toLowerCase().includes(f)));
       if(items.length===0) return;
       anyMatch = true;
