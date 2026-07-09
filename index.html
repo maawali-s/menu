@@ -35,13 +35,14 @@
   header.top{
     position:sticky; top:0; z-index:30;
     background:var(--bg);
-    padding:18px 20px 10px;
+    padding:14px 20px;
     border-bottom:1px solid var(--line);
   }
   .brand-row{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:14px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:8px;
     gap:10px;
+    position:relative;
   }
   .brand-row div{
     flex:1;
@@ -259,12 +260,8 @@
 
 <header class="top">
   <div class="brand-row">
-    <img src="https://swgykbxckelpvgwgneal.supabase.co/storage/v1/object/public/menu/Sarouj%2006.png" alt="Sarouj Logo" style="height:60px; object-fit:contain;">
-    <div>
-      <div class="brand-title brand-font" id="shopNameAr">صاروج بيكري</div>
-      <div class="brand-sub" id="shopNameEn">SAROUJ BAKERY</div>
-    </div>
-    <button id="langToggleBtn" class="lang-btn">🇴🇲 English</button>
+    <img src="https://swgykbxckelpvgwgneal.supabase.co/storage/v1/object/public/menu/Sarouj%2006.png" alt="Sarouj Logo" style="height:100px; object-fit:contain; margin:10px auto; display:block;">
+    <button id="langToggleBtn" class="lang-btn" style="position:absolute; top:18px; right:20px;">🇴🇲 English</button>
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
