@@ -130,7 +130,13 @@
   .item-info{ flex:1; min-width:0; }
   .item-name{ font-size:15.5px; font-weight:700; color:var(--ink); }
   .item-name-en{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
-  .item-price{ font-size:13px; color:var(--accent-dark); font-weight:700; margin-top:3px; }
+  .brand-logo{ width:min(220px, 52vw); height:90px; object-fit:contain; display:block; margin:0 auto; }
+  .item-price{ font-size:13px; color:var(--accent-dark); font-weight:700; margin-top:5px; }
+  .price-discount{ display:flex; flex-direction:column; align-items:flex-start; gap:1px; }
+  .price-old-row{ display:flex; align-items:flex-start; gap:5px; line-height:1; }
+  .price-old{ color:var(--ink-soft); text-decoration:line-through; font-size:11px; font-weight:500; }
+  .discount-badge{ color:var(--accent); font-size:10px; font-weight:900; line-height:1; transform:translateY(-3px); }
+  .price-new{ color:var(--accent-dark); font-size:14px; font-weight:900; }
 
   .qty-controls{ display:flex; align-items:center; gap:10px; }
   .add-btn{
@@ -260,7 +266,7 @@
 
 <header class="top">
   <div class="brand-row">
-    <img src="https://swgykbxckelpvgwgneal.supabase.co/storage/v1/object/public/menu/Sarouj%2006.png" alt="Sarouj Logo" style="height:90px; object-fit:contain;">
+    <img src="images/SAROUJ_LOGO.jpg" alt="Sarouj Bakery Logo" class="brand-logo">
     <button id="langToggleBtn" class="lang-btn" style="position:absolute; right:20px; top:20px;">🇴🇲 English</button>
   </div>
   <div class="search-wrap">
@@ -325,6 +331,16 @@
     return currentLang === 'ar' ? (item.nameEn || '') : item.nameAr;
   }
 
+  const DRINK_CATEGORY_IDS = new Set(["iced-tea","teapot","mojitos","cold-coffee","frappe","hot-coffee","cold-brew"]);
+  const DISCOUNT_RATE = 0.33;
+  function isDrink(category){ return DRINK_CATEGORY_IDS.has(category.id); }
+  function discountedPrice(item){ return item.price * (1 - DISCOUNT_RATE); }
+  function findCategory(id){ return CATEGORIES.find(cat=>cat.items.some(item=>item.id===id)); }
+  function renderPrice(item, category){
+    if(!isDrink(category)) return `<div class="item-price">${money(item.price)} ${CURRENCY_LABEL}</div>`;
+    return `<div class="item-price price-discount"><span class="price-old-row"><span class="discount-badge">-33%</span><span class="price-old">${money(item.price)} ${CURRENCY_LABEL}</span></span><span class="price-new">${money(discountedPrice(item))} ${CURRENCY_LABEL}</span></div>`;
+  }
+
   function totalCount(){
     return Object.values(state).reduce((a,b)=>a+b,0);
   }
@@ -332,7 +348,8 @@
     let sum=0;
     for(const id in state){
       const it = findItem(id);
-      if(it) sum += it.price * state[id];
+      const cat = findCategory(id);
+      if(it && cat) sum += (isDrink(cat) ? discountedPrice(it) : it.price) * state[id];
     }
     return sum;
   }
@@ -380,7 +397,7 @@
           <div class="item-info">
             <div class="item-name">${getName(it)}</div>
             ${getSubName(it) ? `<div class="item-name-en">${getSubName(it)}</div>` : ''}
-            <div class="item-price">${money(it.price)} ${CURRENCY_LABEL}</div>
+            ${renderPrice(it, cat)}
           </div>
           <div class="qty-controls">
             ${selected
@@ -436,7 +453,7 @@
             ${getName(it)}
             ${getSubName(it) ? `<span class="t-name-en">${getSubName(it)}</span>` : ''}
           </span>
-          <span class="t-price">${money(it.price*qty)}</span>
+          <span class="t-price">${money((isDrink(findCategory(id)) ? discountedPrice(it) : it.price)*qty)}</span>
           <button class="ticket-remove" data-id="${id}">✕</button>
         </div>`;
       }).join('');
